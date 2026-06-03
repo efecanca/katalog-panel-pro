@@ -2388,8 +2388,8 @@ void sendScreen(){
             for(String u:uris){
                 upload(phone, "", Uri.parse(u));
             }
+            if(!caption.isEmpty()) sendTextMessage(phone, caption);
         }
-        if(!caption.isEmpty()) sendTextMessage(phone, caption);
     }
 
     void sendTextMessage(String phone, String text) throws Exception {
