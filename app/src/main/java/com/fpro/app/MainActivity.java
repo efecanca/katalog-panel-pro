@@ -2383,16 +2383,13 @@ void sendScreen(){
         ps.flush();
 
         int code=conn.getResponseCode();
-        if(code<400 && !caption.isEmpty()){
-            sendTextMessage(phone, caption);
-        }
         if(code>=400){
             // Albüm başarısız - tek tek gönder
             for(String u:uris){
                 upload(phone, "", Uri.parse(u));
             }
-            if(!caption.isEmpty()) sendTextMessage(phone, caption);
         }
+        if(!caption.isEmpty()) sendTextMessage(phone, caption);
     }
 
     void sendTextMessage(String phone, String text) throws Exception {
