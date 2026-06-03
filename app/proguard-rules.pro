@@ -1,0 +1,2 @@
+-keep class com.fpro.app.** { *; }
+-keepattributes *Annotation*

@@ -1,0 +1,1170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_dashboard.xml
+  Package : com.fpro.app
+  Theme   : Theme.MaterialComponents.NoActionBar
+  Deps    : material:1.11.0 + constraintlayout:2.1.4
+  Canvas  : YOK — saf XML layout
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dashScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_screen"
+    android:fillViewport="false"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_pad_h"
+        android:paddingEnd="@dimen/screen_pad_h"
+        android:paddingTop="@dimen/screen_pad_top"
+        android:paddingBottom="24dp">
+
+        <!-- ═══════════════════════════════════════════════
+             HEADER  ── Logo sol | Kullanıcı pill sağ
+        ═══════════════════════════════════════════════ -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="6dp">
+
+            <!-- Logo grubu: WA ikon + KATALOG / PANEL PRO -->
+            <LinearLayout
+                android:id="@+id/logoGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginStart="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:src="@drawable/ic_wa_logo_green"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Logo" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="KATALOG"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_header_app"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.12"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PANEL PRO"
+                        android:textColor="@color/green"
+                        android:textSize="@dimen/text_header_sub"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.14"
+                        android:includeFontPadding="false" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Kullanıcı pill: avatar | isim+rol | chevron -->
+            <LinearLayout
+                android:id="@+id/userPill"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:background="@drawable/bg_user_pill"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <FrameLayout
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/bg_circle_green"
+                        android:contentDescription="" />
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_person"
+                        android:contentDescription="User" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="7dp"
+                    android:layout_marginEnd="5dp">
+
+                    <TextView
+                        android:id="@+id/tvHeaderUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TEST"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Aktif Kullanıcı"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        android:includeFontPadding="false" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_chevron_down"
+                    android:contentDescription="Menü" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ═══════════════════════════════════════════════
+             WHATSAPP BAĞLANTI KARTI
+        ═══════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardWhatsapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_gap"
+            app:cardBackgroundColor="@color/card_bg"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/green_border"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="14dp">
+
+                <!-- WA logo dairesi -->
+                <FrameLayout
+                    android:id="@+id/waLogoFrame"
+                    android:layout_width="@dimen/wa_logo_size"
+                    android:layout_height="@dimen/wa_logo_size"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <!-- Dış glow halkası -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/bg_wa_logo_circle"
+                        android:contentDescription="" />
+
+                    <!-- WhatsApp beyaz ikon -->
+                    <ImageView
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_wa_logo"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="WhatsApp" />
+
+                    <!-- BAĞLI rozeti -->
+                    <TextView
+                        android:id="@+id/tvBagli"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/bg_badge_connected"
+                        android:text="BAĞLI"
+                        android:textColor="@color/text_primary"
+                        android:textSize="8sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp" />
+                </FrameLayout>
+
+                <!-- Bağlantı bilgileri -->
+                <LinearLayout
+                    android:id="@+id/waInfoCol"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/waLogoFrame"
+                    app:layout_constraintEnd_toStartOf="@id/qrCard"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WhatsApp Bağlantı"
+                        android:textColor="@color/text_primary"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp" />
+
+                    <!-- Bağlantı durumu -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="5dp">
+
+                        <View
+                            android:id="@+id/vStatusDot"
+                            android:layout_width="9dp"
+                            android:layout_height="9dp"
+                            android:background="@drawable/bg_dot_green" />
+
+                        <TextView
+                            android:id="@+id/tvWaStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="Bağlantı aktif"
+                            android:textColor="@color/status_connected"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvApiUrl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="API: http://78.105.143.110:3001"
+                        android:textColor="#4FC3F7"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="3dp"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+
+                    <TextView
+                        android:id="@+id/tvSessionInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Oturum süresi: 2sa 14dk"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <!-- QR Kartı -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/qrCard"
+                    android:layout_width="@dimen/qr_card_w"
+                    android:layout_height="@dimen/qr_card_h"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="#08120E"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/green_border"
+                    app:strokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:src="@drawable/ic_qr_code"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="QR Kod" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="QR Yenile"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════════════════════════════════════════
+             İSTATİSTİK SATIRI
+        ═══════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/stat_row_h"
+            android:layout_marginBottom="@dimen/card_gap"
+            app:cardBackgroundColor="@color/card_bg"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_border"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <!-- Toplam Kişi -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_contacts_blue"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Kişiler" />
+
+                    <TextView
+                        android:id="@+id/tvStatContacts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="0"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/stat_num_size"
+                        android:textStyle="bold"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Toplam Kişi"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/stat_lbl_size"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="52dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/divider_color" />
+
+                <!-- Favori Liste -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_star"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Favori" />
+
+                    <TextView
+                        android:id="@+id/tvStatFav"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="0"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/stat_num_size"
+                        android:textStyle="bold"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Favori Liste"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/stat_lbl_size"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="52dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/divider_color" />
+
+                <!-- Bugünkü Gönderim -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_send_blue"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Gönderim" />
+
+                    <TextView
+                        android:id="@+id/tvStatSent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="0"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/stat_num_size"
+                        android:textStyle="bold"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Bugünkü Gönderim"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="52dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/divider_color" />
+
+                <!-- Kuyrukta -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_clock"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Kuyruk" />
+
+                    <TextView
+                        android:id="@+id/tvStatQueue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="0"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/stat_num_size"
+                        android:textStyle="bold"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Kuyrukta"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/stat_lbl_size"
+                        android:gravity="center" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════════════════════════════════════════
+             MENÜ KARTI GRID — SATIR 1
+        ═══════════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tile_h"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/tile_gap"
+            android:weightSum="3">
+
+            <!-- ── REHBER ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tileRehber"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="2.5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_tile"
+                app:cardBackgroundColor="#0C1E0E"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/green_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_icon_circle"
+                        android:layout_height="@dimen/tile_icon_circle">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_circle_green" android:contentDescription="" />
+                        <ImageView android:layout_width="@dimen/tile_icon_size" android:layout_height="@dimen/tile_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_contacts" android:scaleType="fitCenter"
+                            android:contentDescription="Rehber" />
+                    </FrameLayout>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="REHBER"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_tile_title"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.06"
+                        android:gravity="center" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Rehberini yönet\nve senkronize et"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_tile_sub"
+                        android:gravity="center" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_arrow_circle"
+                        android:layout_height="@dimen/tile_arrow_circle"
+                        android:layout_marginTop="8dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_arrow_green" android:contentDescription="" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/green"
+                            android:contentDescription="Git" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── MEDYA ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tileMedya"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="2.5dp"
+                android:layout_marginEnd="2.5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_tile"
+                app:cardBackgroundColor="@color/blue_dark"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/blue_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_icon_circle"
+                        android:layout_height="@dimen/tile_icon_circle">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_circle_blue" android:contentDescription="" />
+                        <ImageView android:layout_width="@dimen/tile_icon_size" android:layout_height="@dimen/tile_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_media" android:scaleType="fitCenter"
+                            android:contentDescription="Medya" />
+                    </FrameLayout>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="MEDYA"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_tile_title"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.06"
+                        android:gravity="center" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Medya dosyalarını\nyönet ve gönder"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_tile_sub"
+                        android:gravity="center" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_arrow_circle"
+                        android:layout_height="@dimen/tile_arrow_circle"
+                        android:layout_marginTop="8dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_arrow_blue" android:contentDescription="" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/blue"
+                            android:contentDescription="Git" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── GÖNDERİM ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tileGonderim"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="2.5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_tile"
+                app:cardBackgroundColor="@color/purple_dark"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/purple_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_icon_circle"
+                        android:layout_height="@dimen/tile_icon_circle">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_circle_purple" android:contentDescription="" />
+                        <ImageView android:layout_width="@dimen/tile_icon_size" android:layout_height="@dimen/tile_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_send_plane" android:scaleType="fitCenter"
+                            android:contentDescription="Gönderim" />
+                    </FrameLayout>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="GÖNDERİM"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_tile_title"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.06"
+                        android:gravity="center" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Toplu gönderim yap\nve durumu takip et"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_tile_sub"
+                        android:gravity="center" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_arrow_circle"
+                        android:layout_height="@dimen/tile_arrow_circle"
+                        android:layout_marginTop="8dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_arrow_purple" android:contentDescription="" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/purple"
+                            android:contentDescription="Git" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- ═══════════════════════════════════════════════
+             MENÜ KARTI GRID — SATIR 2
+        ═══════════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tile_h"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/card_gap"
+            android:weightSum="3">
+
+            <!-- ── FAVORİ LİSTELER ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tileFavori"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="2.5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_tile"
+                app:cardBackgroundColor="@color/yellow_dark"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/yellow_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_icon_circle"
+                        android:layout_height="@dimen/tile_icon_circle">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_circle_yellow" android:contentDescription="" />
+                        <ImageView android:layout_width="@dimen/tile_icon_size" android:layout_height="@dimen/tile_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_star" android:scaleType="fitCenter"
+                            android:contentDescription="Favori" />
+                    </FrameLayout>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="FAVORİ LİSTELER"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.04"
+                        android:gravity="center" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Favori listelerini\noluştur ve yönet"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_tile_sub"
+                        android:gravity="center" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_arrow_circle"
+                        android:layout_height="@dimen/tile_arrow_circle"
+                        android:layout_marginTop="8dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_arrow_yellow" android:contentDescription="" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/yellow"
+                            android:contentDescription="Git" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── RAPORLAR ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tileRaporlar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="2.5dp"
+                android:layout_marginEnd="2.5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_tile"
+                app:cardBackgroundColor="@color/cyan_dark"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/cyan_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_icon_circle"
+                        android:layout_height="@dimen/tile_icon_circle">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_circle_cyan" android:contentDescription="" />
+                        <ImageView android:layout_width="@dimen/tile_icon_size" android:layout_height="@dimen/tile_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chart" android:scaleType="fitCenter"
+                            android:contentDescription="Raporlar" />
+                    </FrameLayout>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="RAPORLAR"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_tile_title"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.06"
+                        android:gravity="center" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Gönderim raporlarını\ngörüntüle"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_tile_sub"
+                        android:gravity="center" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_arrow_circle"
+                        android:layout_height="@dimen/tile_arrow_circle"
+                        android:layout_marginTop="8dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_arrow_cyan" android:contentDescription="" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/cyan"
+                            android:contentDescription="Git" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── AYARLAR ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tileAyarlar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="2.5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_tile"
+                app:cardBackgroundColor="@color/indigo_dark"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/indigo_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_icon_circle"
+                        android:layout_height="@dimen/tile_icon_circle">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_circle_indigo" android:contentDescription="" />
+                        <ImageView android:layout_width="@dimen/tile_icon_size" android:layout_height="@dimen/tile_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_settings" android:scaleType="fitCenter"
+                            android:contentDescription="Ayarlar" />
+                    </FrameLayout>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="AYARLAR"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_tile_title"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.06"
+                        android:gravity="center" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Senkronizasyon ve\nsistem ayarları"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_tile_sub"
+                        android:gravity="center" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/tile_arrow_circle"
+                        android:layout_height="@dimen/tile_arrow_circle"
+                        android:layout_marginTop="8dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_arrow_indigo" android:contentDescription="" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/indigo"
+                            android:contentDescription="Git" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- ═══════════════════════════════════════════════
+             SON AKTİVİTELER
+        ═══════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_gap"
+            app:cardBackgroundColor="@color/card_bg"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_border"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <!-- Başlık -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_activity_wave"
+                        android:contentDescription="Aktivite" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:text="SON AKTİVİTELER"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:id="@+id/tvViewAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tümünü Gör"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginStart="3dp"
+                        android:src="@drawable/ic_chevron_right"
+                        android:contentDescription="" />
+                </LinearLayout>
+
+                <!-- ── Aktivite 1: Rehber ── -->
+                <LinearLayout
+                    android:id="@+id/actRow1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="7dp">
+
+                    <FrameLayout android:layout_width="@dimen/act_icon_size" android:layout_height="@dimen/act_icon_size">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_act_green" android:contentDescription="" />
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_contacts" android:scaleType="fitCenter"
+                            android:contentDescription="Rehber sync" />
+                    </FrameLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginStart="11dp"
+                        android:orientation="vertical">
+                        <TextView android:id="@+id/tvAct1Title" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rehber senkronize edildi"
+                            android:textColor="@color/text_primary" android:textSize="13sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tvAct1Sub" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1.304 kişi başarıyla yüklendi"
+                            android:textColor="@color/text_secondary" android:textSize="11sp"
+                            android:layout_marginTop="1dp" />
+                    </LinearLayout>
+
+                    <TextView android:id="@+id/tvAct1Time"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="18:01:24"
+                        android:textColor="@color/green" android:textSize="12sp" android:textStyle="bold"
+                        android:layout_marginEnd="7dp" />
+
+                    <FrameLayout android:layout_width="24dp" android:layout_height="24dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_check_green" android:contentDescription="" />
+                        <ImageView android:layout_width="12dp" android:layout_height="12dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_check" android:contentDescription="Tamam" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider_color" />
+
+                <!-- ── Aktivite 2: Gönderim ── -->
+                <LinearLayout
+                    android:id="@+id/actRow2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="7dp">
+
+                    <FrameLayout android:layout_width="@dimen/act_icon_size" android:layout_height="@dimen/act_icon_size">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_act_purple" android:contentDescription="" />
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_send_plane" android:scaleType="fitCenter"
+                            android:contentDescription="Gönderim" />
+                    </FrameLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginStart="11dp"
+                        android:orientation="vertical">
+                        <TextView android:id="@+id/tvAct2Title" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gönderim tamamlandı"
+                            android:textColor="@color/text_primary" android:textSize="13sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tvAct2Sub" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 mesaj gönderildi"
+                            android:textColor="@color/text_secondary" android:textSize="11sp"
+                            android:layout_marginTop="1dp" />
+                    </LinearLayout>
+
+                    <TextView android:id="@+id/tvAct2Time"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="17:48:12"
+                        android:textColor="@color/purple" android:textSize="12sp" android:textStyle="bold"
+                        android:layout_marginEnd="7dp" />
+
+                    <FrameLayout android:layout_width="24dp" android:layout_height="24dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_check_purple" android:contentDescription="" />
+                        <ImageView android:layout_width="12dp" android:layout_height="12dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_check_purple" android:contentDescription="Tamam" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider_color" />
+
+                <!-- ── Aktivite 3: Cloud ── -->
+                <LinearLayout
+                    android:id="@+id/actRow3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="4dp">
+
+                    <FrameLayout android:layout_width="@dimen/act_icon_size" android:layout_height="@dimen/act_icon_size">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_act_blue" android:contentDescription="" />
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_cloud_upload" android:scaleType="fitCenter"
+                            android:contentDescription="Cloud" />
+                    </FrameLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginStart="11dp"
+                        android:orientation="vertical">
+                        <TextView android:id="@+id/tvAct3Title" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cloud senkronizasyon"
+                            android:textColor="@color/text_primary" android:textSize="13sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tvAct3Sub" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Veriler başarıyla yedeklendi"
+                            android:textColor="@color/text_secondary" android:textSize="11sp"
+                            android:layout_marginTop="1dp" />
+                    </LinearLayout>
+
+                    <TextView android:id="@+id/tvAct3Time"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="17:30:45"
+                        android:textColor="@color/blue" android:textSize="12sp" android:textStyle="bold"
+                        android:layout_marginEnd="7dp" />
+
+                    <FrameLayout android:layout_width="24dp" android:layout_height="24dp">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:src="@drawable/bg_check_blue" android:contentDescription="" />
+                        <ImageView android:layout_width="12dp" android:layout_height="12dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_check_blue" android:contentDescription="Tamam" />
+                    </FrameLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════════════════════════════════════════
+             FOOTER
+        ═══════════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_shield"
+                    android:contentDescription="Shield" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="KATALOG PANEL PRO v57"
+                    android:textColor="@color/text_dim"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Güvenli • Hızlı • Profesyonel"
+                android:textColor="@color/text_dim"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

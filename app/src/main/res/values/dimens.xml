@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen -->
+    <dimen name="screen_pad_h">10dp</dimen>
+    <dimen name="screen_pad_top">6dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="radius_card">18dp</dimen>
+    <dimen name="radius_card_sm">12dp</dimen>
+    <dimen name="radius_circle">50dp</dimen>
+    <dimen name="card_gap">8dp</dimen>
+
+    <!-- WA card -->
+    <dimen name="wa_logo_size">78dp</dimen>
+    <dimen name="qr_card_w">90dp</dimen>
+    <dimen name="qr_card_h">90dp</dimen>
+
+    <!-- Stats -->
+    <dimen name="stat_row_h">104dp</dimen>
+    <dimen name="stat_num_size">22sp</dimen>
+    <dimen name="stat_lbl_size">11sp</dimen>
+
+    <!-- Tile grid -->
+    <dimen name="tile_h">172dp</dimen>
+    <dimen name="tile_gap">5dp</dimen>
+    <dimen name="tile_icon_circle">72dp</dimen>
+    <dimen name="tile_icon_size">34dp</dimen>
+    <dimen name="tile_arrow_circle">28dp</dimen>
+
+    <!-- Activity -->
+    <dimen name="act_icon_size">44dp</dimen>
+
+    <!-- Text -->
+    <dimen name="text_tile_title">13sp</dimen>
+    <dimen name="text_tile_sub">10sp</dimen>
+    <dimen name="text_header_app">14sp</dimen>
+    <dimen name="text_header_sub">11sp</dimen>
+    <dimen name="text_body">13sp</dimen>
+    <dimen name="text_caption">11sp</dimen>
+    <dimen name="text_micro">9sp</dimen>
+</resources>
