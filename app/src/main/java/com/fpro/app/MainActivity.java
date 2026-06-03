@@ -553,6 +553,18 @@ void loginScreen(){
         }catch(Exception ignored){}
     }
 
+    void cloudPushFavLists(){
+        if(apiToken==null || apiToken.length()<5) return;
+        new Thread(()->{
+            try{
+                org.json.JSONObject fbody=new org.json.JSONObject();
+                fbody.put("favLists",favListsToJson());
+                fbody.put("token",apiToken);
+                httpPost(apiBase+"/api/favlists?token="+apiToken,fbody.toString());
+            }catch(Exception ignored){}
+        }).start();
+    }
+
     void cloudPullFavLists(){
         if(apiToken==null || apiToken.length()<5) return;
         try{
@@ -1375,7 +1387,7 @@ void home(){
 
             TextView del=smallBtn("SİL",RED);
             del.setTextSize(9);
-            del.setOnClickListener(v->{ favLists.remove(l); appPrefs().edit().remove("list_"+l).apply(); save(); favListsScreen(); });
+            del.setOnClickListener(v->{ favLists.remove(l); appPrefs().edit().remove("list_"+l).apply(); save(); cloudPushFavLists(); favListsScreen(); });
             actions.addView(del,new LinearLayout.LayoutParams(dp(44),dp(36)));
 
             row.addView(actions,new LinearLayout.LayoutParams(-2,-2));
@@ -1631,7 +1643,7 @@ void home(){
         final EditText e=input("","Liste adı");
         new AlertDialog.Builder(this).setTitle("Yeni Liste").setView(e).setPositiveButton("Oluştur",(d,w)->{
             String n=e.getText().toString().trim(); if(n.length()==0)n="Yeni Liste";
-            if(!favLists.contains(n)) favLists.add(n); activeList=n; save(); listEditScreen();
+            if(!favLists.contains(n)) favLists.add(n); activeList=n; save(); cloudPushFavLists(); listEditScreen();
         }).setNegativeButton("İptal",null).show();
     }
 
