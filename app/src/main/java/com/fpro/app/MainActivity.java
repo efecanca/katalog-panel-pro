@@ -1744,7 +1744,7 @@ void home(){
 
             // Mesaj kutusu
             aCard.addView(t("Bu albümün mesajı:",11,false,MUTED));
-            final EditText capInput=input(caption,"{isim} hanım, yeni koleksiyonumuz...");
+            final EditText capInput=input(caption,"{Ürün adı...");
             capInput.setOnFocusChangeListener((v,hasFocus)->{
                 if(!hasFocus){
                     while(albumCaptions.size()<=aIdx) albumCaptions.add("");
