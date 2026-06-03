@@ -2400,9 +2400,9 @@ void sendScreen(){
         conn.setConnectTimeout(15000); conn.setReadTimeout(30000);
         conn.setDoOutput(true); conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type","application/json");
-        String body="{"phone":""+phone+"","message":""+text.replace(""","\\"").replace("
-","\\n")+""}";
-        conn.getOutputStream().write(body.getBytes("UTF-8"));
+        org.json.JSONObject obj=new org.json.JSONObject();
+        obj.put("phone",phone); obj.put("message",text);
+        conn.getOutputStream().write(obj.toString().getBytes("UTF-8"));
         conn.getResponseCode();
     }
 
