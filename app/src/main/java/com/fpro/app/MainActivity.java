@@ -2383,6 +2383,9 @@ void sendScreen(){
         ps.flush();
 
         int code=conn.getResponseCode();
+        if(code<400 && !caption.isEmpty()){
+            sendTextMessage(phone, caption);
+        }
         if(code>=400){
             // Albüm başarısız - tek tek gönder
             for(String u:uris){
@@ -2390,6 +2393,17 @@ void sendScreen(){
                 caption=""; // sadece ilk fotoğrafa caption
             }
         }
+    }
+
+    void sendTextMessage(String phone, String text) throws Exception {
+        HttpURLConnection conn=(HttpURLConnection)new URL(apiBase+"/send?token="+apiToken).openConnection();
+        conn.setConnectTimeout(15000); conn.setReadTimeout(30000);
+        conn.setDoOutput(true); conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type","application/json");
+        String body="{"phone":""+phone+"","message":""+text.replace(""","\\"").replace("
+","\\n")+""}";
+        conn.getOutputStream().write(body.getBytes("UTF-8"));
+        conn.getResponseCode();
     }
 
     void upload(String phone,String caption,Uri fileUri)throws Exception{
