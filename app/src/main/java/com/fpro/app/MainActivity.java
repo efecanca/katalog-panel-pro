@@ -2232,7 +2232,7 @@ void sendScreen(){
                             String caption=msg.length()>0?
                                 antiSpamText(randomCaptionStyle(msg.replace("{isim}",c.n)),rng):"";
                             uploadAlbum(c.p, mediaOrder, caption);
-                        } else if(msg.length()>0){
+                        } else if(false && msg.length()>0){
                             JSONObject body=new JSONObject();
                             body.put("phone",c.p);
                             body.put("message",antiSpamText(
