@@ -2389,9 +2389,9 @@ void sendScreen(){
         if(code>=400){
             // Albüm başarısız - tek tek gönder
             for(String u:uris){
-                upload(phone, caption.isEmpty()?"":caption, Uri.parse(u));
-                caption=""; // sadece ilk fotoğrafa caption
+                upload(phone, "", Uri.parse(u));
             }
+            if(!caption.isEmpty()) sendTextMessage(phone, caption);
         }
     }
 
