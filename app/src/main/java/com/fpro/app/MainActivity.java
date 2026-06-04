@@ -424,7 +424,8 @@ boolean isLoggedIn(){
     
 void subscriptionScreen(String mesaj){
     root.removeAllViews();
-    LinearLayout c=col();
+    LinearLayout c=new LinearLayout(this);
+    c.setOrientation(LinearLayout.VERTICAL);
     c.setGravity(android.view.Gravity.CENTER);
     c.setPadding(dp(32),dp(80),dp(32),dp(32));
     c.addView(t("🔒",64,false,Color.WHITE));
