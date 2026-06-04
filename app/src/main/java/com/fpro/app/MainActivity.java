@@ -14,6 +14,10 @@ import android.os.*;
 import android.provider.ContactsContract;
 import android.content.*;
 import android.content.pm.PackageManager;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import java.util.concurrent.TimeUnit;
 import android.database.Cursor;
 import android.graphics.*;
 import android.graphics.drawable.GradientDrawable;
@@ -72,7 +76,11 @@ public class MainActivity extends Activity {
         seedDefaults();
         loadContacts();
         syncFromServerSilent();
-        try{ cloudPullFavLists(); }catch(Exception ignored){} // Tüm kullanıcılar
+        try{ cloudPullFavLists(); }catch(Exception ignored){}
+        PeriodicWorkRequest syncWork = new PeriodicWorkRequest.Builder(
+            FavSyncWorker.class, 1, TimeUnit.DAYS).build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "fav_sync", ExistingPeriodicWorkPolicy.KEEP, syncWork); // Tüm kullanıcılar
         try{ new Thread(()->cloudPullContacts()).start(); }catch(Exception ignored){}
         home();
     }
