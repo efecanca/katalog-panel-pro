@@ -422,6 +422,34 @@ boolean isLoggedIn(){
     }
 
     
+void subscriptionScreen(String mesaj){
+    root.removeAllViews();
+    LinearLayout c=col();
+    c.setGravity(android.view.Gravity.CENTER);
+    c.setPadding(dp(32),dp(80),dp(32),dp(32));
+    c.addView(t("🔒",64,false,Color.WHITE));
+    c.addView(t("Abonelik Süresi Doldu",20,true,RED));
+    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+    lp.setMargins(0,dp(12),0,dp(24));
+    TextView msg=t(mesaj,13,false,MUTED);
+    msg.setGravity(android.view.Gravity.CENTER);
+    c.addView(msg,lp);
+    TextView btn=btn("📞 Aboneliği Yenile İçin İletişime Geçin",GREEN);
+    btn.setOnClickListener(v->{
+        android.content.Intent i=new android.content.Intent(android.content.Intent.ACTION_DIAL);
+        i.setData(android.net.Uri.parse("tel:+905416960617"));
+        startActivity(i);
+    });
+    c.addView(btn);
+    TextView cikis=smallBtn("Çıkış Yap",RED);
+    cikis.setOnClickListener(v->{ appPrefs().edit().clear().apply(); loginScreen(); });
+    LinearLayout.LayoutParams lp2=new LinearLayout.LayoutParams(-2,-2);
+    lp2.setMargins(0,dp(16),0,0);
+    lp2.gravity=android.view.Gravity.CENTER;
+    c.addView(cikis,lp2);
+    root.addView(c);
+}
+
 void loginScreen(){
         tab="Login";
         root=new LinearLayout(this);
@@ -476,7 +504,13 @@ void loginScreen(){
                     loadContacts();
                     syncFromServerSilent();
                     try{ if(loginUser!=null && loginUser.equalsIgnoreCase("admin")) cloudPullFavLists(); }catch(Exception ignored){}
+                    JSONObject sub=new JSONObject(httpGet(fBase+"/api/check-subscription?token="+token));
+                if(sub.optBoolean("active",false)){
                     runOnUiThread(()->home());
+                } else {
+                    String err=sub.optString("error","Abonelik suresi doldu");
+                    runOnUiThread(()->subscriptionScreen(err));
+                }
                 }catch(Exception e){
                     runOnUiThread(()->toast("Giriş hatası: "+e.getMessage()));
                 }
