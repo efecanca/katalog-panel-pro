@@ -509,7 +509,7 @@ void loginScreen(){
                 if(sub.optBoolean("active",false)){
                     try{ cloudPullFavLists(); }catch(Exception ignored){}
                     int kalan=sub.optInt("kalan_gun",9999);
-                    if(kalan<=30 && kalan<9999){ runOnUiThread(()->toast("⚠ Aboneliğiniz "+kalan+" gün sonra sona eriyor",YELLOW)); }
+                    if(kalan<=30 && kalan<9999){ runOnUiThread(()->toast("⚠ Aboneliğiniz "+kalan+" gün sonra sona eriyor")); }
                     runOnUiThread(()->home());
                 } else {
                     String err=sub.optString("error","Abonelik suresi doldu");
