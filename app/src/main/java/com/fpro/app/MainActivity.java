@@ -576,10 +576,10 @@ void loginScreen(){
                 if(latestCode>currentCode){
                     runOnUiThread(()->{
                         android.app.AlertDialog.Builder b=new android.app.AlertDialog.Builder(MainActivity.this);
-                        b.setTitle("🔄 Güncelleme Mevcut - v"+latestName);
+                        b.setTitle(" Güncelleme Mevcut - v"+latestName);
                         b.setMessage(changelog+"
 
-Şu an: v9.4 → Yeni: v"+latestName);
+Şu an: v9.4 -> Yeni: v"+latestName);
                         b.setPositiveButton("İndir ve Güncelle",(d,w)->{
                             downloadAndInstallApk(apkUrl);
                         });
@@ -2116,7 +2116,7 @@ void sendScreen(){
                 albumInfo.addView(t("Albüm "+(ai+1)+": "+preview,12,false,0xFF6b7280));
             }
             TextView editAlbums=new TextView(this);
-            editAlbums.setText("Albümleri Düzenle →");
+            editAlbums.setText("Albümleri Düzenle ->");
             editAlbums.setTextColor(0xFF22d3ee); editAlbums.setTextSize(12);
             editAlbums.setPadding(0,dp(6),0,0);
             editAlbums.setOnClickListener(v->mediaScreen());
@@ -2308,7 +2308,7 @@ void sendScreen(){
                     try{ Thread.sleep(molaDk*60*1000L); }catch(Exception ignored){}
                 }
 
-                // ── 3 art arda hata → 90sn koruma molasi ──────────
+                // ── 3 art arda hata -> 90sn koruma molasi ──────────
                 if(consecutive>=3){
                     runOnUiThread(()->statusText.setText("Koruma: 90sn bekleniyor..."));
                     try{ Thread.sleep(90000L+rng.nextInt(30000)); }catch(Exception ignored){}
