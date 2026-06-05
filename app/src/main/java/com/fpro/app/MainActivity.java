@@ -566,7 +566,7 @@ void loginScreen(){
     void checkUpdate(){
         new Thread(()->{
             try{
-                JSONObject r=new JSONObject(httpGet(fBase+"/version.json"));
+                JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
                 int latestCode=r.optInt("versionCode",0);
                 int currentCode=94;
                 boolean force=r.optBoolean("forceUpdate",false);
