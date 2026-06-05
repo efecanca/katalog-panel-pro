@@ -577,9 +577,7 @@ void loginScreen(){
                     runOnUiThread(()->{
                         android.app.AlertDialog.Builder b=new android.app.AlertDialog.Builder(MainActivity.this);
                         b.setTitle(" Güncelleme Mevcut - v"+latestName);
-                        b.setMessage(changelog+"
-
-Şu an: v9.4 -> Yeni: v"+latestName);
+                        b.setMessage(changelog+"\n\nMevcut: v9.4 -> Yeni: v"+latestName);
                         b.setPositiveButton("İndir ve Güncelle",(d,w)->{
                             downloadAndInstallApk(apkUrl);
                         });
