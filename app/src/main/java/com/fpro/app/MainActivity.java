@@ -568,6 +568,24 @@ void loginScreen(){
         long lastCheck=appPrefs().getLong("lastUpdateCheck",0);
         if(System.currentTimeMillis()-lastCheck < 86400000) return;
         appPrefs().edit().putLong("lastUpdateCheck",System.currentTimeMillis()).apply();
+        // Bilinmeyen kaynak izni kontrol et
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+            if(!getPackageManager().canRequestPackageInstalls()){
+                runOnUiThread(()->{
+                    new android.app.AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Kurulum İzni Gerekli")
+                        .setMessage("Otomatik güncelleme için bilinmeyen kaynaklardan kurulum iznine ihtiyaç var.")
+                        .setPositiveButton("İzin Ver",(d,w)->{
+                            android.content.Intent i=new android.content.Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                            i.setData(android.net.Uri.parse("package:"+getPackageName()));
+                            startActivity(i);
+                        })
+                        .setNegativeButton("Sonra",(d,w)->d.dismiss())
+                        .show();
+                });
+                return;
+            }
+        }
         new Thread(()->{
             try{
                 JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
