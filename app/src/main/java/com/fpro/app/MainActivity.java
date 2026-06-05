@@ -1315,7 +1315,7 @@ void home(){
             tvUser.setText(u);
         }
         TextView tvApi=findViewById(R.id.tvApiUrl);
-        if(tvApi!=null) tvApi.setText("API: "+apiBase);
+        if(tvApi!=null) tvApi.setText("admin".equals(loginUser) ? "API: "+apiBase : "API: ***");
         connectionText=findViewById(R.id.tvWaStatus);
         refreshDashStats();
         refreshDashLogs();
