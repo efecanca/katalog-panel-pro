@@ -16,13 +16,14 @@ jobs:
 
       - name: Decode Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/katalog-release.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/katalog-release.jks
+          ls -la $GITHUB_WORKSPACE/katalog-release.jks
 
       - name: Build Release APK
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=katalog-release.jks \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/katalog-release.jks \
             -Pandroid.injected.signing.store.password=${{ secrets.KEY_PASSWORD }} \
             -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
             -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
