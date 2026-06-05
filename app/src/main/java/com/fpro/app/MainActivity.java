@@ -2878,6 +2878,21 @@ void settingsScreen(){
         LinearLayout c=card();
         c.addView(t("Ayarlar",24,true,Color.WHITE));
         c.addView(t("Aktif Kullanici: "+loginUser,13,false,MUTED));
+        // Abonelik suresi
+        new Thread(()->{
+            try{
+                java.net.URL url=new java.net.URL(apiBase+"/api/check-subscription?token="+apiToken);
+                java.net.HttpURLConnection con=(java.net.HttpURLConnection)url.openConnection();
+                con.setConnectTimeout(3000);
+                String resp=new String(con.getInputStream().readAllBytes());
+                con.disconnect();
+                org.json.JSONObject j=new org.json.JSONObject(resp);
+                int kalan=j.optInt("kalan_gun",9999);
+                String msg=kalan>=9999?"Abonelik: Sinirsiz":"Abonelik: "+kalan+" gun kaldi";
+                int color=kalan<=7?0xFFFF4444:kalan<=30?0xFFFFAA00:0xFF25D366;
+                runOnUiThread(()->c.addView(t(msg,12,false,color)));
+            }catch(Exception ignored){}
+        }).start();
 
         TextView qrBtn=btn("Uygulamadan QR Bagla / Yenile",PURPLE);
         qrBtn.setOnClickListener(v->showMobileQrDialog());
