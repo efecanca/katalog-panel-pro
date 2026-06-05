@@ -564,6 +564,10 @@ void loginScreen(){
     }
 
     void checkUpdate(){
+        // Gunde bir kez kontrol et
+        long lastCheck=appPrefs().getLong("lastUpdateCheck",0);
+        if(System.currentTimeMillis()-lastCheck < 86400000) return;
+        appPrefs().edit().putLong("lastUpdateCheck",System.currentTimeMillis()).apply();
         new Thread(()->{
             try{
                 JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
