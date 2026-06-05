@@ -685,6 +685,20 @@ void loginScreen(){
         }).start();
     }
 
+    void cloudReconnect(){
+        if(apiBase==null || apiToken==null) return;
+        new Thread(()->{
+            try{
+                java.net.URL url=new java.net.URL(apiBase+"/reconnect?token="+apiToken);
+                java.net.HttpURLConnection c=(java.net.HttpURLConnection)url.openConnection();
+                c.setRequestMethod("POST");
+                c.setConnectTimeout(5000);
+                c.getResponseCode();
+                c.disconnect();
+            }catch(Exception ignored){}
+        }).start();
+    }
+
     void cloudPullFavLists(){
         if(apiToken==null || apiToken.length()<5) return;
         try{
@@ -1366,6 +1380,8 @@ void home(){
         if(apiToken==null || apiToken.length()<5){
             waConnected=false;
             waStatus="● WhatsApp bağlantısı yok";
+                // Gönderim varsa otomatik yeniden bağlan
+                if(sending){ new Handler(Looper.getMainLooper()).postDelayed(()->{ try{ cloudReconnect(); }catch(Exception ignored){} }, 3000); }
             if(connectionText!=null) connectionText.setText(waStatus);
             invalidateDashboard();
             return;
