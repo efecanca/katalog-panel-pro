@@ -563,6 +563,60 @@ void loginScreen(){
         return arr;
     }
 
+    void checkUpdate(){
+        new Thread(()->{
+            try{
+                JSONObject r=new JSONObject(httpGet(fBase+"/version.json"));
+                int latestCode=r.optInt("versionCode",0);
+                int currentCode=94;
+                boolean force=r.optBoolean("forceUpdate",false);
+                String latestName=r.optString("versionName","");
+                String changelog=r.optString("changelog","");
+                final String apkUrl=r.optString("apkUrl","");
+                if(latestCode>currentCode){
+                    runOnUiThread(()->{
+                        android.app.AlertDialog.Builder b=new android.app.AlertDialog.Builder(MainActivity.this);
+                        b.setTitle("🔄 Güncelleme Mevcut - v"+latestName);
+                        b.setMessage(changelog+"
+
+Şu an: v9.4 → Yeni: v"+latestName);
+                        b.setPositiveButton("İndir ve Güncelle",(d,w)->{
+                            downloadAndInstallApk(apkUrl);
+                        });
+                        if(!force) b.setNegativeButton("Sonra",(d,w)->d.dismiss());
+                        b.setCancelable(!force);
+                        b.show();
+                    });
+                }
+            }catch(Exception e){}
+        }).start();
+    }
+    void downloadAndInstallApk(String url){
+        toast("APK indiriliyor...");
+        new Thread(()->{
+            try{
+                java.net.URL u=new java.net.URL(url);
+                java.net.HttpURLConnection c=(java.net.HttpURLConnection)u.openConnection();
+                c.setConnectTimeout(15000);
+                java.io.InputStream in=c.getInputStream();
+                java.io.File f=new java.io.File(getExternalFilesDir(null),"update.apk");
+                java.io.FileOutputStream out=new java.io.FileOutputStream(f);
+                byte[] buf=new byte[4096]; int n;
+                while((n=in.read(buf))>0) out.write(buf,0,n);
+                out.close(); in.close();
+                runOnUiThread(()->{
+                    try{
+                        android.content.Intent i=new android.content.Intent(android.content.Intent.ACTION_VIEW);
+                        android.net.Uri uri=androidx.core.content.FileProvider.getUriForFile(MainActivity.this,getPackageName()+".provider",f);
+                        i.setDataAndType(uri,"application/vnd.android.package-archive");
+                        i.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        i.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                    }catch(Exception e){ toast("Kurulum hatası: "+e.getMessage()); }
+                });
+            }catch(Exception e){ runOnUiThread(()->toast("İndirme hatası: "+e.getMessage())); }
+        }).start();
+    }
     void applyFavListsFromJson(JSONArray arr){
         if(arr==null) return;
         try{
@@ -1216,6 +1270,7 @@ void home(){
         setContentView(R.layout.activity_dashboard);
         setupDashboard();
         checkStatus();
+        checkUpdate();
     }
 
     void setupDashboard(){
