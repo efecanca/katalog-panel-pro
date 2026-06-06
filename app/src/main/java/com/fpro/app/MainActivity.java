@@ -1764,7 +1764,7 @@ void home(){
             }
 
         View.OnClickListener l=v->{
-            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || listsOfPhone(phone).contains(activeList);
+            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || sp.contains(phone) || sp.contains(c.p);
             LinkedHashSet<String> sp=getListPhones(activeList);
             if(isNow){
                 sp.remove(phone);
