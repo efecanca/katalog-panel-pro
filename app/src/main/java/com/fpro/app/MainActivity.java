@@ -1767,9 +1767,10 @@ void home(){
             boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || listsOfPhone(phone).contains(activeList);
             if(isNow){
                 LinkedHashSet<String> current=getListPhones(activeList);
+                current.remove(phone);
+                current.remove(c.p);
+                editingPhones.clear();
                 editingPhones.addAll(current);
-                editingPhones.remove(phone);
-                editingPhones.remove(c.p);
             } else {
                 editingPhones.add(phone);
             }
