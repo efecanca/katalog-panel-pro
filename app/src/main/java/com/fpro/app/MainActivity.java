@@ -572,6 +572,7 @@ void loginScreen(){
                     load();
                     seedDefaults();
                     loadContacts();
+                    cloudPullFavLists();
                     syncFromServerSilent();
                     // cloudPullFavLists kaldirildi - sadece acilista cekiliyor
                     JSONObject sub=new JSONObject(httpGet(fBase+"/api/check-subscription?token="+token));
@@ -1833,7 +1834,7 @@ void home(){
             String phone=normPhone(c.p);
             boolean is=phoneInSet(editingPhones,c.p);
 
-            String line=c.n+"\n"+phone;
+            String line=c.n+"\n"+c.p;
             if(is){ line+="\n✅ Seçili"; }
 
             name.setText(line);
