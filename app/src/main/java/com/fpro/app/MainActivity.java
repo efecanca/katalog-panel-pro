@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
             FavSyncWorker.class, 1, TimeUnit.DAYS).build();
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "fav_sync", ExistingPeriodicWorkPolicy.KEEP, syncWork); // Tüm kullanıcılar
-        try{ new Thread(()->cloudPullContacts()).start(); }catch(Exception ignored){}
+        // cloudPullContacts kapatildi: rehber sadece cihazda kalir
         home();
     }
 
@@ -735,11 +735,9 @@ void loginScreen(){
     void cloudPushFavContacts(){
         if(apiToken==null || apiToken.length()<5) return;
         try{
-            JSONObject cbody=new JSONObject();
-            cbody.put("contacts",contactsToJson());
-            httpPost(apiBase+"/api/contacts?token="+apiToken,cbody.toString());
             JSONObject fbody=new JSONObject();
             fbody.put("favLists",favListsToJson());
+            fbody.put("token",apiToken);
             httpPost(apiBase+"/api/favlists?token="+apiToken,fbody.toString());
         }catch(Exception ignored){}
     }
