@@ -189,6 +189,7 @@ String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşö
     }
     void saveListPhones(String name, Collection<String> phones){
         appPrefs().edit().putString(listKey(name),join(phones,",")).apply();
+        cloudPushFavLists();
     }
 
     String join(Collection<String> c,String sep){
