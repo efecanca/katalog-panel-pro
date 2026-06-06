@@ -1597,7 +1597,7 @@ void home(){
 
     void listEditScreen(){
         listEditMode=true;
-        editingPhones.clear(); editingPhones.addAll(getListPhones(activeList));
+        editingPhones.clear(); for(String p:getListPhones(activeList)){editingPhones.add(normPhone(p));}
         base("Liste Düzenle",true);
 
         LinearLayout top=card(); top.addView(t("⭐ "+activeList,22,true,Color.WHITE)); countText=t(editingPhones.size()+" kişi",15,true,GREEN); top.addView(countText);
@@ -1617,7 +1617,7 @@ void home(){
     void addToListScreen(){
         listEditMode=true;
         editingPhones.clear();
-        editingPhones.addAll(getListPhones(activeList));
+        for(String p:getListPhones(activeList)){editingPhones.add(normPhone(p));}
 
         // Arama yapmadan tüm rehber görünsün.
         loadContacts();
@@ -1763,7 +1763,7 @@ void home(){
 
             C c=filtered.get(pos);
             String phone=normPhone(c.p);
-            boolean is=editingPhones.contains(phone) || editingPhones.contains(c.p);
+            boolean is=editingPhones.contains(phone) || editingPhones.contains(normPhone(c.p));
 
             String line=c.n+"\n"+phone;
             if(is){ line+="\n✅ Seçili"; }
@@ -1779,7 +1779,7 @@ void home(){
             }
 
         View.OnClickListener l=v->{
-            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p);
+            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(normPhone(c.p));
             if(isNow){
                 String normP=normPhone(phone);
                 editingPhones.removeIf(x -> normPhone(x).equals(normP));
@@ -3182,7 +3182,7 @@ void settingsScreen(){
         String phone=normPhone(c.p);
         String exists=listsOfPhone(phone);
 
-        if(editingPhones.contains(phone) || editingPhones.contains(c.p)){
+        if(editingPhones.contains(phone) || editingPhones.contains(normPhone(c.p))){
             editingPhones.remove(phone);
             editingPhones.remove(c.p);
             saveListPhones(activeList,editingPhones);
