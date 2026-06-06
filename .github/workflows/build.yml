@@ -34,6 +34,6 @@ jobs:
           name: app-release
           path: app/build/outputs/apk/release/*.apk
 
-    - name: Deploy APK to VPS
-      run: |
-        curl -s -F "apk=@$(find app/build/outputs/apk/release -name '*.apk' | head -1)"         -H "x-upload-secret: KatalogDeploy2024"         http://178.105.143.110:3001/upload-apk
+      - name: Deploy APK to VPS
+        run: |
+          curl -s -F "apk=@$(find app/build/outputs/apk/release -name '*.apk' | head -1)" -H "x-upload-secret: KatalogDeploy2024" http://178.105.143.110:3001/upload-apk
