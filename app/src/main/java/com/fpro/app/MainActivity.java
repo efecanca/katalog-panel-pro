@@ -1739,43 +1739,30 @@ void home(){
 
             C c=filtered.get(pos);
             String phone=normPhone(c.p);
-            String listStatus=listsOfPhone(phone);
-            boolean inThisList=listStatus.contains(activeList);
-            boolean is=editingPhones.contains(phone) || editingPhones.contains(c.p) || inThisList;
+            boolean is=editingPhones.contains(phone) || editingPhones.contains(c.p);
 
             String line=c.n+"\n"+phone;
-            if(is){
-                line+="\n✅ Seçili";
-            }else if(listStatus.length()>0){
-                line+="\n⭐ Fav: "+listStatus;
-            }
+            if(is){ line+="\n✅ Seçili"; }
 
             name.setText(line);
 
             if(is){
                 b.setText("Seçili ✓");
                 b.setBackground(grad(GREEN,darker(GREEN),10));
-            }else if(listStatus.length()>0){
-                b.setText("Fav'da");
-                b.setBackground(grad(YELLOW,darker(YELLOW),10));
             }else{
                 b.setText("Ekle");
                 b.setBackground(grad(BLUE,darker(BLUE),10));
             }
 
         View.OnClickListener l=v->{
-            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || listStatus.contains(activeList);
-            LinkedHashSet<String> sp=getListPhones(activeList);
+            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p);
             if(isNow){
-                sp.remove(phone);
-                sp.remove(c.p);
                 editingPhones.remove(phone);
                 editingPhones.remove(c.p);
             } else {
-                sp.add(phone);
                 editingPhones.add(phone);
             }
-            saveListPhones(activeList,sp);
+            saveListPhones(activeList,editingPhones);
             save();
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
