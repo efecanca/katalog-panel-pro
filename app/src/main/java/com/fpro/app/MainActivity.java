@@ -1764,22 +1764,18 @@ void home(){
 
         View.OnClickListener l=v->{
             boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || listsOfPhone(phone).contains(activeList);
+            LinkedHashSet<String> sp=getListPhones(activeList);
             if(isNow){
+                sp.remove(phone);
+                sp.remove(c.p);
                 editingPhones.remove(phone);
                 editingPhones.remove(c.p);
-                // Fav'da ama editingPhones'da yoksa SP'den de sil
-                LinkedHashSet<String> sp=getListPhones(activeList);
-                if(sp.remove(phone)|sp.remove(c.p)){
-                    saveListPhones(activeList,sp);
-                    editingPhones.clear();
-                    editingPhones.addAll(sp);
-                }
             } else {
+                sp.add(phone);
                 editingPhones.add(phone);
             }
-            saveListPhones(activeList,editingPhones);
+            saveListPhones(activeList,sp);
             save();
-            cloudPushFavLists();
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
         };
