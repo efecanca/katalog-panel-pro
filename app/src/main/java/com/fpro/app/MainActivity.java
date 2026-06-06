@@ -1767,15 +1767,13 @@ void home(){
             if(isNow){
                 editingPhones.remove(phone);
                 editingPhones.remove(c.p);
-                saveListPhones(activeList,editingPhones);
-                save();
-                if(adapter!=null) adapter.notifyDataSetChanged();
-                updateCount();
             } else {
-                addOrMoveDialog(c);
-                notifyDataSetChanged();
-                updateCount();
+                editingPhones.add(phone);
             }
+            saveListPhones(activeList,editingPhones);
+            save();
+            if(adapter!=null) adapter.notifyDataSetChanged();
+            updateCount();
         };
             b.setOnClickListener(l);
             row.setOnClickListener(l);
