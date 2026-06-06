@@ -1743,7 +1743,7 @@ void home(){
             String listStatus=listsOfPhone(phone);
 
             String line=c.n+"\n"+phone;
-            if(isNow){
+            if(is){
                 line+="\n✅ Seçili";
             }else if(listStatus.length()>0){
                 line+="\n⭐ Fav: "+listStatus;
@@ -1751,7 +1751,7 @@ void home(){
 
             name.setText(line);
 
-            if(isNow){
+            if(is){
                 b.setText("Seçili ✓");
                 b.setBackground(grad(GREEN,darker(GREEN),10));
             }else if(listStatus.length()>0){
