@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
         seedDefaults();
         loadContacts();
         syncFromServerSilent();
-        try{ cloudPullFavLists(); }catch(Exception ignored){}
+        // cloudPullFavLists kaldirildi - sadece acilista cekiliyor
         PeriodicWorkRequest syncWork = new PeriodicWorkRequest.Builder(
             FavSyncWorker.class, 1, TimeUnit.DAYS).build();
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -505,10 +505,10 @@ void loginScreen(){
                     seedDefaults();
                     loadContacts();
                     syncFromServerSilent();
-                    try{ if(loginUser!=null && loginUser.equalsIgnoreCase("admin")) cloudPullFavLists(); }catch(Exception ignored){}
+                    // cloudPullFavLists kaldirildi - sadece acilista cekiliyor
                     JSONObject sub=new JSONObject(httpGet(fBase+"/api/check-subscription?token="+token));
                 if(sub.optBoolean("active",false)){
-                    try{ cloudPullFavLists(); }catch(Exception ignored){}
+                    // cloudPullFavLists kaldirildi - sadece acilista cekiliyor
                     int kalan=sub.optInt("kalan_gun",9999);
                 if(kalan<=0){ runOnUiThread(()->subscriptionScreen("Abonelik süreniz doldu!")); return; }
                     if(kalan<=30 && kalan<9999){ runOnUiThread(()->toast("⚠ Aboneliğiniz "+kalan+" gün sonra sona eriyor")); }
