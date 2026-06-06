@@ -418,7 +418,7 @@ SharedPreferences appPrefs(){
     }
 
     String activeUserScope(){
-        return safeScopeName(loginUser);
+        return userScopeKey();
     }
 
     SharedPreferences userPrefs(){
