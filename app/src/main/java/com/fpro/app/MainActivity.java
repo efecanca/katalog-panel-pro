@@ -1769,7 +1769,7 @@ void home(){
 
             C c=filtered.get(pos);
             String phone=normPhone(c.p);
-            boolean is=editingPhones.contains(phone) || editingPhones.contains(normPhone(c.p));
+            boolean is=phoneInSet(editingPhones,c.p);
 
             String line=c.n+"\n"+phone;
             if(is){ line+="\n✅ Seçili"; }
@@ -1785,12 +1785,11 @@ void home(){
             }
 
         View.OnClickListener l=v->{
-            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(normPhone(c.p));
+            boolean isNow=phoneInSet(editingPhones,c.p);
             if(isNow){
-                String normP=normPhone(phone);
-                editingPhones.removeIf(x -> normPhone(x).equals(normP));
+                removePhoneFromSet(editingPhones,c.p);
             } else {
-                editingPhones.add(phone);
+                editingPhones.add(c.p);
             }
             saveListPhones(activeList,editingPhones);
             save();
@@ -3188,9 +3187,8 @@ void settingsScreen(){
         String phone=normPhone(c.p);
         String exists=listsOfPhone(phone);
 
-        if(editingPhones.contains(phone) || editingPhones.contains(normPhone(c.p))){
-            editingPhones.remove(phone);
-            editingPhones.remove(c.p);
+        if(phoneInSet(editingPhones,c.p)){
+            removePhoneFromSet(editingPhones,c.p);
             saveListPhones(activeList,editingPhones);
             save();
             if(adapter!=null) adapter.notifyDataSetChanged();
@@ -3200,7 +3198,7 @@ void settingsScreen(){
         }
 
         if(exists.length()==0){
-            editingPhones.add(phone);
+            editingPhones.add(c.p);
             saveListPhones(activeList,editingPhones);
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
@@ -3211,7 +3209,7 @@ void settingsScreen(){
             .setTitle("Kişi zaten favoride")
             .setMessage(c.n+" şu listede: "+exists)
             .setPositiveButton("Bu listeye de ekle",(d,w)->{
-                editingPhones.add(phone);
+                editingPhones.add(c.p);
                 saveListPhones(activeList,editingPhones);
                 if(adapter!=null) adapter.notifyDataSetChanged();
                 updateCount();
@@ -3220,12 +3218,11 @@ void settingsScreen(){
                 for(String l:favLists){
                     LinkedHashSet<String> set=getListPhones(l);
                     if(!l.equals(activeList)){
-                        set.remove(phone);
-                        set.remove(c.p);
+                        removePhoneFromSet(set,c.p);
                         saveListPhones(l,set);
                     }
                 }
-                editingPhones.add(phone);
+                editingPhones.add(c.p);
                 saveListPhones(activeList,editingPhones);
                 if(adapter!=null) adapter.notifyDataSetChanged();
                 updateCount();
