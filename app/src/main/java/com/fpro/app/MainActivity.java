@@ -1571,6 +1571,29 @@ void home(){
             .show();
     }
 
+    void buildFavStatusCache(){
+        favStatusCache.clear();
+        for(String l:favLists){
+            LinkedHashSet<String> phones=getListPhones(l);
+            for(String p:phones){
+                String np=normPhone(p);
+                if(np.length()==0) continue;
+                String old=favStatusCache.get(np);
+                if(old==null || old.length()==0) favStatusCache.put(np,l);
+                else if(!((", "+old+", ").contains(", "+l+", "))) favStatusCache.put(np,old+", "+l);
+            }
+        }
+    }
+
+    boolean favStatusHasList(String status, String listName){
+        if(status==null || listName==null || listName.length()==0) return false;
+        String[] parts=status.split(",");
+        for(String part:parts){
+            if(part.trim().equals(listName)) return true;
+        }
+        return false;
+    }
+
     void listEditScreen(){
         listEditMode=true;
         editingPhones.clear(); editingPhones.addAll(getListPhones(activeList));
