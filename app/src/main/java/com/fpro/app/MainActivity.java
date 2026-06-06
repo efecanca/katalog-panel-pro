@@ -1739,7 +1739,7 @@ void home(){
 
             C c=filtered.get(pos);
             String phone=normPhone(c.p);
-            boolean is=editingPhones.contains(phone) || editingPhones.contains(c.p);
+            boolean is=editingPhones.contains(phone) || editingPhones.contains(c.p) || listsOfPhone(phone).contains(activeList);
             String listStatus=listsOfPhone(phone);
 
             String line=c.n+"\n"+phone;
