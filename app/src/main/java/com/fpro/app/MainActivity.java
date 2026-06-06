@@ -3165,8 +3165,10 @@ void settingsScreen(){
             editingPhones.remove(phone);
             editingPhones.remove(c.p);
             saveListPhones(activeList,editingPhones);
+            save();
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
+            try{ new Thread(()->cloudPushFavContacts()).start(); }catch(Exception ignored){}
             return;
         }
 
