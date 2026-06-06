@@ -1631,7 +1631,7 @@ void home(){
         baseFixed("Ekle");
         LinearLayout top=card();
         top.addView(t("Rehberden Ekle",22,true,Color.WHITE));
-        countText=t("Listeye eklenecek: "+editingPhones.size(),14,true,GREEN);
+        countText=t("Listeye eklenecek: 0",14,true,GREEN);
         top.addView(countText);
 
         searchBox=input("","Kişi ara...");
@@ -1734,7 +1734,7 @@ void home(){
 
     void updateCount(){
         if(countText!=null){
-            if(tab.equals("Ekle")) countText.setText("Listeye eklenecek: "+editingPhones.size());
+            if(tab.equals("Ekle")) countText.setText("Listeye eklenecek: 0");
             else countText.setText(editingPhones.size()+" kişi");
         }
     }
