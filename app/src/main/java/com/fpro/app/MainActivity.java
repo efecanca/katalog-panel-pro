@@ -182,6 +182,26 @@ public class MainActivity extends Activity {
 
 String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşöçıİĞÜŞÖÇ_-]","_"); }
 
+
+    String waPhone(String p){
+        if(p==null) return "";
+        p=p.replaceAll("[^0-9+]","");
+        if(p.startsWith("00")) p=p.substring(2);
+        if(p.startsWith("+")) p=p.substring(1);
+
+        // TR GSM: 5xxxxxxxxx -> 905xxxxxxxxx
+        if(p.length()==10 && p.startsWith("5")){
+            p="90"+p;
+        }
+
+        // TR GSM: 05xxxxxxxxx -> 905xxxxxxxxx
+        if(p.length()==11 && p.startsWith("05")){
+            p="9"+p;
+        }
+
+        return p;
+    }
+
     boolean phoneInSet(Collection<String> set, String phone){
         String n=normPhone(phone);
         for(String p:set){
@@ -2603,7 +2623,7 @@ void sendScreen(){
     void upload(String phone,String caption,Uri fileUri)throws Exception{
         String boundary="----KP"+System.currentTimeMillis();
         HttpURLConnection conn=(HttpURLConnection)new URL(apiBase+"/send-media?token="+apiToken).openConnection(); conn.setConnectTimeout(15000); conn.setReadTimeout(120000); conn.setDoOutput(true); conn.setRequestMethod("POST"); conn.setRequestProperty("Content-Type","multipart/form-data; boundary="+boundary);
-        OutputStream out=conn.getOutputStream(); form(out,boundary,"phone",phone); form(out,boundary,"caption",caption);
+        OutputStream out=conn.getOutputStream(); form(out,boundary,"phone",waPhone(phone)); form(out,boundary,"caption",caption);
         String mime=getContentResolver().getType(fileUri); if(mime==null)mime="image/jpeg"; String type="image"; if(mime.startsWith("video"))type="video"; if(mime.contains("pdf")||mime.contains("document"))type="document"; form(out,boundary,"type",type);
         String fn=type.equals("video")?"video.mp4":type.equals("document")?"document.pdf":"image.jpg";
         out.write(("--"+boundary+"\r\n").getBytes()); out.write(("Content-Disposition: form-data; name=\"file\"; filename=\""+fn+"\"\r\n").getBytes()); out.write(("Content-Type: "+mime+"\r\n\r\n").getBytes());
