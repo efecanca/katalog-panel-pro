@@ -722,9 +722,26 @@ void loginScreen(){
                 LinkedHashSet<String> set=new LinkedHashSet<>();
                 if(phones!=null){
                     for(int k=0;k<phones.length();k++){
-                        String p=phones.optString(k,"");
-                        if(p.length()>0) set.add(p);
-                    }
+                            String p=phones.optString(k,"");
+                            if(p!=null){
+                                p=p.trim();
+                                if(p.length()>0){
+                                    if(p.contains(",")){
+                                        for(String x:p.split(",")){
+                                            x=x.trim();
+                                            if(x.length()>0) set.add(x);
+                                        }
+                                    }else if(p.contains("|")){
+                                        for(String x:p.split("\\|")){
+                                            x=x.trim();
+                                            if(x.length()>0) set.add(x);
+                                        }
+                                    }else{
+                                        set.add(p);
+                                    }
+                                }
+                            }
+                        }
                 }
                 appPrefs().edit().putString(listKey(name),join(set,",")).apply();
             }
