@@ -236,8 +236,13 @@ String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşö
         return s;
     }
     void saveListPhones(String name, Collection<String> phones){
-        appPrefs().edit().putString(listKey(name),join(phones,",")).apply();
-    }
+    appPrefs().edit().putString(listKey(name),join(phones,",")).apply();
+    try{
+        if(apiToken!=null && apiToken.length()>=5){
+            new Thread(()->cloudPushFavContacts()).start();
+        }
+    }catch(Exception ignored){}
+}
 
     String join(Collection<String> c,String sep){
         StringBuilder b=new StringBuilder();
