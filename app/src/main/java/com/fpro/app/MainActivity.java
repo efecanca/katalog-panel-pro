@@ -184,8 +184,14 @@ String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşö
     LinkedHashSet<String> getListPhones(String name){
         LinkedHashSet<String> s=new LinkedHashSet<>();
         String raw=appPrefs().getString(listKey(name),"");
-        addSplit(s,raw,",");
-        addSplit(s,raw,"\\|");
+        if(raw==null || raw.trim().length()==0) return s;
+
+        // Yeni kayıt formatı virgül. Eski | formatı varsa sadece onu oku.
+        if(raw.contains(",")){
+            addSplit(s, raw, ",");
+        }else{
+            addSplit(s, raw, "\\|");
+        }
         return s;
     }
     void saveListPhones(String name, Collection<String> phones){
