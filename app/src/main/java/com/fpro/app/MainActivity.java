@@ -1762,14 +1762,20 @@ void home(){
                 b.setBackground(grad(BLUE,darker(BLUE),10));
             }
 
-            View.OnClickListener l=v->{
+        View.OnClickListener l=v->{
+            if(is){
+                editingPhones.remove(phone);
+                editingPhones.remove(c.p);
+                saveListPhones(activeList,editingPhones);
+                save();
+                if(adapter!=null) adapter.notifyDataSetChanged();
+                updateCount();
+            } else {
                 addOrMoveDialog(c);
-                if(!all && !editingPhones.contains(phone) && !editingPhones.contains(c.p)){
-                    filtered.remove(c);
-                }
                 notifyDataSetChanged();
                 updateCount();
-            };
+            }
+        };
             b.setOnClickListener(l);
             row.setOnClickListener(l);
 
