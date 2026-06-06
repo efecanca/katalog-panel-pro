@@ -1623,7 +1623,7 @@ void home(){
     void addToListScreen(){
         listEditMode=true;
         editingPhones.clear();
-        for(String p:getListPhones(activeList)){editingPhones.add(normPhone(p));}
+        editingPhones.addAll(getListPhones(activeList));
 
         // Arama yapmadan tüm rehber görünsün.
         loadContacts();
