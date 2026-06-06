@@ -51,6 +51,7 @@ public class MainActivity extends Activity {
     LinkedHashSet<String> selected=new LinkedHashSet<>(), editingPhones=new LinkedHashSet<>();
     ArrayList<String> media=new ArrayList<>(), reports=new ArrayList<>(), favLists=new ArrayList<>(), sent=new ArrayList<>(), queue=new ArrayList<>();
     LinkedHashSet<String> selectedFavLists=new LinkedHashSet<>();
+    HashMap<String,String> favStatusCache=new HashMap<>();
     TextView connectionText, countText, sendButton, statusText, queueText, sentText, progressText, currentPersonText, etaText;
     volatile boolean waConnected=false;
     volatile String waStatus="● Durum kontrol ediliyor";
