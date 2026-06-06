@@ -1597,7 +1597,7 @@ void home(){
 
     void listEditScreen(){
         listEditMode=true;
-        editingPhones.clear(); for(String p:getListPhones(activeList)){editingPhones.add(normPhone(p));}
+        editingPhones.clear(); editingPhones.addAll(getListPhones(activeList));
         base("Liste Düzenle",true);
 
         LinearLayout top=card(); top.addView(t("⭐ "+activeList,22,true,Color.WHITE)); countText=t(editingPhones.size()+" kişi",15,true,GREEN); top.addView(countText);
