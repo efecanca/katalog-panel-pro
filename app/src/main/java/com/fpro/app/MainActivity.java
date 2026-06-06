@@ -499,6 +499,27 @@ void subscriptionScreen(String mesaj){
     root.addView(c);
 }
 
+
+void expiredSession(String mesaj){
+    try{ getSharedPreferences("fpro_login",MODE_PRIVATE).edit().clear().apply(); }catch(Exception ignored){}
+    try{ loginUser=""; apiToken=""; clearRuntimeData(); }catch(Exception ignored){}
+    runOnUiThread(()->{
+        loginScreen();
+        new AlertDialog.Builder(this)
+            .setTitle("Abonelik Süresi Doldu")
+            .setMessage(mesaj+"\n\nDevam etmek için yönetici ile iletişime geçin.")
+            .setPositiveButton("WhatsApp ile iletişim",(d,w)->{
+                try{
+                    Intent i=new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse("https://wa.me/905416960617?text=Merhaba%20aboneli%C4%9Fim%20sona%20erdi%2C%20destek%20istiyorum."));
+                    startActivity(i);
+                }catch(Exception e){ toast("WhatsApp açılamadı"); }
+            })
+            .setNegativeButton("Kapat",null)
+            .show();
+    });
+}
+
 void loginScreen(){
         tab="Login";
         root=new LinearLayout(this);
@@ -557,12 +578,12 @@ void loginScreen(){
                 if(sub.optBoolean("active",false)){
                     // cloudPullFavLists kaldirildi - sadece acilista cekiliyor
                     int kalan=sub.optInt("kalan_gun",9999);
-                if(kalan<=0){ runOnUiThread(()->subscriptionScreen("Abonelik süreniz doldu!")); return; }
+                if(kalan<=0){ expiredSession("Abonelik süreniz doldu!"); return; }
                     if(kalan<=30 && kalan<9999){ runOnUiThread(()->toast("⚠ Aboneliğiniz "+kalan+" gün sonra sona eriyor")); }
                     runOnUiThread(()->home());
                 } else {
                     String err=sub.optString("error","Abonelik suresi doldu");
-                    runOnUiThread(()->subscriptionScreen(err));
+                    expiredSession(err);
                 }
                 }catch(Exception e){
                     runOnUiThread(()->toast("Giriş hatası: "+e.getMessage()));
