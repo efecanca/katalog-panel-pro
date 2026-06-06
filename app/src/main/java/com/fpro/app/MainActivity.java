@@ -181,6 +181,27 @@ public class MainActivity extends Activity {
     }
 
 String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşöçıİĞÜŞÖÇ_-]","_"); }
+
+    boolean phoneInSet(Collection<String> set, String phone){
+        String n=normPhone(phone);
+        for(String p:set){
+            if(normPhone(p).equals(n)) return true;
+        }
+        return false;
+    }
+
+    void removePhoneFromSet(Collection<String> set, String phone){
+        String n=normPhone(phone);
+        Iterator<String> it=set.iterator();
+        while(it.hasNext()){
+            String p=it.next();
+            if(normPhone(p).equals(n)){
+                it.remove();
+                return;
+            }
+        }
+    }
+
     LinkedHashSet<String> getListPhones(String name){
         LinkedHashSet<String> s=new LinkedHashSet<>();
         String raw=appPrefs().getString(listKey(name),"");
