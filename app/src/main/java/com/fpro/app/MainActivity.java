@@ -175,7 +175,7 @@ public class MainActivity extends Activity {
 
     String normPhone(String p){
         if(p==null) return "";
-        p=p.replaceAll("[^0-9+]","");
+        p=p.replaceAll("[^0-9]",""); if(p.startsWith("90") && p.length()==12) p=p.substring(2); if(p.startsWith("0") && p.length()==11) p=p.substring(1);
         if(p.startsWith("00")) p="+"+p.substring(2);
         return p;
     }
