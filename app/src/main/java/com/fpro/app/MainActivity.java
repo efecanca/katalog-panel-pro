@@ -1763,7 +1763,7 @@ void home(){
             }
 
         View.OnClickListener l=v->{
-            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p);
+            boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || listsOfPhone(phone).contains(activeList);
             if(isNow){
                 editingPhones.remove(phone);
                 editingPhones.remove(c.p);
