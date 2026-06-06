@@ -1781,8 +1781,7 @@ void home(){
         View.OnClickListener l=v->{
             boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p);
             if(isNow){
-                editingPhones.remove(phone);
-                editingPhones.remove(c.p);
+                removePhone(editingPhones, phone);
             } else {
                 editingPhones.add(phone);
             }
