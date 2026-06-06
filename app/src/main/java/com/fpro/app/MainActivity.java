@@ -189,7 +189,6 @@ String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşö
     }
     void saveListPhones(String name, Collection<String> phones){
         appPrefs().edit().putString(listKey(name),join(phones,",")).apply();
-        cloudPushFavLists();
     }
 
     String join(Collection<String> c,String sep){
@@ -1766,16 +1765,21 @@ void home(){
         View.OnClickListener l=v->{
             boolean isNow=editingPhones.contains(phone) || editingPhones.contains(c.p) || listsOfPhone(phone).contains(activeList);
             if(isNow){
-                LinkedHashSet<String> current=getListPhones(activeList);
-                current.remove(phone);
-                current.remove(c.p);
-                editingPhones.clear();
-                editingPhones.addAll(current);
+                editingPhones.remove(phone);
+                editingPhones.remove(c.p);
+                // Fav'da ama editingPhones'da yoksa SP'den de sil
+                LinkedHashSet<String> sp=getListPhones(activeList);
+                if(sp.remove(phone)|sp.remove(c.p)){
+                    saveListPhones(activeList,sp);
+                    editingPhones.clear();
+                    editingPhones.addAll(sp);
+                }
             } else {
                 editingPhones.add(phone);
             }
             saveListPhones(activeList,editingPhones);
             save();
+            cloudPushFavLists();
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
         };
