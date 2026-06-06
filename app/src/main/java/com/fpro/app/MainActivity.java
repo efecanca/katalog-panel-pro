@@ -1872,7 +1872,7 @@ void home(){
                 pCell.setPadding(dp(3),0,dp(3),0);
                 ImageView img=new ImageView(this);
                 img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                try{ img.setImageURI(Uri.parse(photoUri)); }catch(Exception ignored){}
+                try{ img.setImageURI(Uri.parse(photoUri)); }catch(Throwable ignored){ img.setImageResource(android.R.drawable.ic_menu_gallery); }
                 img.setOnClickListener(v->{
                     photos.remove(pIdx);
                     save(); mediaScreen();
@@ -1950,7 +1950,7 @@ void home(){
         TextView rem=t("Kaldır",13,true,RED); rem.setGravity(Gravity.CENTER); rem.setOnClickListener(v->{media.remove(uri);save();mediaScreen();}); cell.addView(rem);
         GridLayout.LayoutParams gp=new GridLayout.LayoutParams(); gp.width=(getResources().getDisplayMetrics().widthPixels-dp(44))/2; gp.setMargins(dp(4),dp(4),dp(4),dp(4)); grid.addView(cell,gp);
     }
-    void galleryPicker(){ perms(false); Intent i=new Intent(Intent.ACTION_GET_CONTENT); i.setType("image/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Galeriden coklu gorsel sec"),REQ_MEDIA); }
+    void galleryPicker(){ perms(false); Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("image/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Galeriden coklu gorsel sec"),REQ_MEDIA); }
     void galleryPickerForAlbum(){ perms(false); Intent i=new Intent(Intent.ACTION_GET_CONTENT); i.setType("image/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Album "+(pickingAlbumIdx+1)+" icin gorsel sec"),REQ_ALBUM_BASE+pickingAlbumIdx); }
     void filePicker(){ Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("*/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"image/*","video/*","application/pdf"}); startActivityForResult(Intent.createChooser(i,"PDF / Dosya seç"),REQ_MEDIA); }
     @Override protected void onActivityResult(int req,int res,Intent data){
