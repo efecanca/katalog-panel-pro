@@ -2414,7 +2414,18 @@ void sendScreen(){
 
     void startSend(){
         LinkedHashSet<String> sendSet=getSelectedSendPhones();
-        ArrayList<C> targets=new ArrayList<>(); for(C c:contacts) if(sendSet.contains(c.p))targets.add(c);
+        ArrayList<C> targets=new ArrayList<>();
+        for(String p:sendSet){
+            C found=null;
+            for(C c:contacts){
+                if(normPhone(c.p).equals(normPhone(p))){
+                    found=c;
+                    break;
+                }
+            }
+            if(found!=null) targets.add(found);
+            else targets.add(new C(p,p));
+        }
         if(targets.isEmpty()){toast("Önce listeye kişi ekle");return;}
         if(albums.isEmpty() && media.isEmpty()&&msgBox.getText().toString().trim().length()==0){toast("Albüm veya medya sec");return;}
         sending=true; stop=false; sent.clear(); queue.clear(); for(C c:targets)queue.add(c.n+" - "+c.p);
