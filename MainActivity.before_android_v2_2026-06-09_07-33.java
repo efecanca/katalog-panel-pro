@@ -56,19 +56,12 @@ public class MainActivity extends Activity {
     volatile boolean waConnected=false;
     volatile String waStatus="● Durum kontrol ediliyor";
     ProgressBar sendProgress;
-    CircularProgressView circularView;
     EditText searchBox, msgBox, personDelayBox, mediaDelayBox, delayMinBox, delayMaxBox;
     boolean manualMode=false; // false=OTO, true=Manuel
     ListView listView;
     ContactAdapter adapter;
     boolean listEditMode=false;
     volatile boolean sending=false, stop=false;
-    // ── V2 Sunucu Kuyruğu ───────────────────────────────────────────
-    boolean useServerQueueV2 = true;   // true=V2 varsayılan, false=eski motor (fallback)
-    String  v2JobId          = null;   // sunucudan dönen jobId
-    android.os.Handler v2PollHandler = new android.os.Handler(android.os.Looper.getMainLooper());
-    Runnable v2PollRunnable  = null;
-    // ────────────────────────────────────────────────────────────────
     long scheduledSendAt=0;
     Handler scheduleHandler=new Handler(Looper.getMainLooper());
 
@@ -77,7 +70,6 @@ public class MainActivity extends Activity {
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         loadSchedule();
-        resumeV2IfNeeded(); // V2 devam eden job varsa resume et
         perms(false);
         if(!isLoggedIn()){ loginScreen(); return; }
         wipeRuntimeForUserSwitch();
@@ -2300,99 +2292,25 @@ void sendScreen(){
         form.addView(sendButton);
         root.addView(form);
 
-        // ── CANLI İLERLEME KARTI — Circular Progress ──
-        LinearLayout live=new LinearLayout(this);
-        live.setOrientation(LinearLayout.VERTICAL);
-        live.setPadding(dp(16),dp(16),dp(16),dp(16));
-        live.setBackground(bg(Color.rgb(13,13,13),20));
-        LinearLayout.LayoutParams liveLp=new LinearLayout.LayoutParams(-1,-2);
-        liveLp.setMargins(0,dp(8),0,dp(8));
-        live.setLayoutParams(liveLp);
-
-        // Başlık + V2 rozet satırı
-        LinearLayout liveHeaderRow=new LinearLayout(this);
-        liveHeaderRow.setOrientation(LinearLayout.HORIZONTAL);
-        liveHeaderRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        TextView liveTitle=t("CANLI İLERLEME",11,true,MUTED);
-        liveTitle.setLetterSpacing(0.08f);
-        LinearLayout.LayoutParams ltLp=new LinearLayout.LayoutParams(0,-2,1f);
-        liveTitle.setLayoutParams(ltLp);
-        // V2 rozet
-        TextView v2Badge=t(useServerQueueV2?"☁ SUNUCU V2":"📱 CİHAZ",10,true,
-            useServerQueueV2?Color.rgb(96,165,250):MUTED);
-        v2Badge.setPadding(dp(8),dp(3),dp(8),dp(3));
-        v2Badge.setBackground(bg(useServerQueueV2?Color.rgb(10,20,40):Color.rgb(20,20,20),99));
-        liveHeaderRow.addView(liveTitle);
-        liveHeaderRow.addView(v2Badge);
-        live.addView(liveHeaderRow);
-
-        // Circular progress — ortalanmış
-        circularView=new CircularProgressView(this);
-        sendProgress=new ProgressBar(this); // dummy — eski kod uyumu
-        sendProgress.setVisibility(android.view.View.GONE);
-        progressText=t("",0,false,Color.TRANSPARENT); // dummy
-        progressText.setVisibility(android.view.View.GONE);
-        LinearLayout.LayoutParams cpLp=new LinearLayout.LayoutParams(-2,-2);
-        cpLp.gravity=android.view.Gravity.CENTER_HORIZONTAL;
-        cpLp.setMargins(0,dp(10),0,dp(8));
-        live.addView(circularView,cpLp);
-
-        // Mini stats — Gönderildi / Kuyrukta
-        LinearLayout miniRow=new LinearLayout(this);
-        miniRow.setOrientation(LinearLayout.HORIZONTAL);
-        miniRow.setGravity(android.view.Gravity.CENTER);
-        miniRow.setWeightSum(3f);
-
-        // Gönderildi
-        LinearLayout mLeft=new LinearLayout(this);
-        mLeft.setOrientation(LinearLayout.VERTICAL);
-        mLeft.setGravity(android.view.Gravity.CENTER);
-        mLeft.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1f));
-        sentText=t(sent.isEmpty()?"0":String.valueOf(sent.size()),18,true,GREEN);
-        sentText.setGravity(android.view.Gravity.CENTER);
-        TextView mLeftLabel=t("Gönderildi",10,false,MUTED);
-        mLeftLabel.setGravity(android.view.Gravity.CENTER);
-        mLeft.addView(sentText); mLeft.addView(mLeftLabel);
-
-        // Divider
-        android.view.View vDiv=new android.view.View(this);
-        vDiv.setBackgroundColor(Color.rgb(30,30,30));
-        LinearLayout.LayoutParams vdLp=new LinearLayout.LayoutParams(dp(1),dp(32));
-        vdLp.gravity=android.view.Gravity.CENTER_VERTICAL;
-        vDiv.setLayoutParams(vdLp);
-
-        // Kuyrukta
-        LinearLayout mRight=new LinearLayout(this);
-        mRight.setOrientation(LinearLayout.VERTICAL);
-        mRight.setGravity(android.view.Gravity.CENTER);
-        mRight.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1f));
-        queueText=t(queue.isEmpty()?"0":String.valueOf(queue.size()),18,true,Color.rgb(200,200,200));
-        queueText.setGravity(android.view.Gravity.CENTER);
-        TextView mRightLabel=t("Kuyrukta",10,false,MUTED);
-        mRightLabel.setGravity(android.view.Gravity.CENTER);
-        mRight.addView(queueText); mRight.addView(mRightLabel);
-
-        miniRow.addView(mLeft);
-        miniRow.addView(vDiv);
-        miniRow.addView(mRight);
-        LinearLayout.LayoutParams miniLp=new LinearLayout.LayoutParams(-1,-2);
-        miniLp.setMargins(0,0,0,dp(14));
-        live.addView(miniRow,miniLp);
-
-        // Ayraç
-        android.view.View sep=new android.view.View(this);
-        sep.setBackgroundColor(Color.rgb(26,26,26));
-        LinearLayout.LayoutParams sepLp=new LinearLayout.LayoutParams(-1,dp(1));
-        sepLp.setMargins(0,0,0,dp(12));
-        live.addView(sep,sepLp);
-
-        // Şu an satırı
-        currentPersonText=t("Şu an: bekleniyor",12,false,Color.rgb(180,180,180));
-        etaText=t("Kalan süre: hesaplanmadı",12,false,MUTED);
+        LinearLayout live=card();
+        live.addView(t("Canlı İlerleme",20,true,Color.WHITE));
+        progressText=t("0% gönderildi",18,true,GREEN);
+        currentPersonText=t("Şu an: bekleniyor",14,false,Color.WHITE);
+        etaText=t("Kalan süre: hesaplanmadı",13,false,MUTED);
+        sendProgress=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);
+        sendProgress.setMax(100);
+        sendProgress.setProgress(0);
+        live.addView(progressText);
+        live.addView(sendProgress,new LinearLayout.LayoutParams(-1,dp(16)));
         live.addView(currentPersonText);
-        LinearLayout.LayoutParams etaLp=new LinearLayout.LayoutParams(-1,-2);
-        etaLp.setMargins(0,dp(6),0,0);
-        live.addView(etaText,etaLp);
+        live.addView(etaText);
+        // Kuyruk durumunu göster
+        String queueInit=queue.isEmpty()?"Kuyrukta: Yok":"Kuyrukta: "+queue.size()+" kisi bekliyor";
+        String sentInit=sent.isEmpty()?"Gonderilen: Henüz yok":"Gonderilen: "+sent.size()+" kisi";
+        queueText=t(queueInit,13,false,Color.WHITE);
+        sentText=t(sentInit,13,false,GREEN);
+        live.addView(queueText);
+        live.addView(sentText);
 
         // Kuyruk varsa otomatik devam et
         if(!queue.isEmpty() && !sending){
@@ -2495,12 +2413,6 @@ void sendScreen(){
 
 
     void startSend(){
-        // ── V2: Sunucu Kuyruğu (varsayılan) ─────────────────────────
-        if(useServerQueueV2){
-            startSendV2();
-            return;
-        }
-        // ── V1: Eski motor (fallback) — değiştirilmedi ───────────────
         LinkedHashSet<String> sendSet=getSelectedSendPhones();
         ArrayList<C> targets=new ArrayList<>();
         for(String p:sendSet){
@@ -2647,288 +2559,7 @@ void sendScreen(){
     }
 
 
-    void stopSend(){
-        stop=true;
-        statusText.setText("Durduruluyor...");
-        // V2: sunucuya stop sinyali gönder
-        if(useServerQueueV2 && v2JobId!=null){
-            final String jid=v2JobId;
-            new Thread(()->{
-                try{ httpPost(apiBase+"/api/queue-stop-v2?token="+apiToken,
-                        "{\"jobId\":\""+jid+"\"}"); }
-                catch(Exception ignored){}
-            }).start();
-            stopV2Poll();
-            sending=false;
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════════════
-    //  V2 SUNUCU KUYRUK MOTORU
-    // ══════════════════════════════════════════════════════════════════
-
-    void startSendV2(){
-        // Kişi listesi
-        LinkedHashSet<String> sendSet = getSelectedSendPhones();
-        ArrayList<C> targets = new ArrayList<>();
-        for(String p : sendSet){
-            C found=null;
-            for(C c:contacts){ if(normPhone(c.p).equals(normPhone(p))){ found=c; break; } }
-            targets.add(found!=null ? found : new C(p,p));
-        }
-        if(targets.isEmpty()){ toast("Önce listeye kişi ekle"); return; }
-        if(albums.isEmpty() && media.isEmpty()){ toast("Albüm veya medya seç"); return; }
-
-        sending=true; stop=false;
-        sent.clear(); queue.clear();
-        for(C c:targets) queue.add(c.n+" - "+c.p);
-
-        sendButton.setText("GÖNDERİMİ DURDUR");
-        sendButton.setBackground(grad(RED,darker(RED),14));
-        if(statusText!=null) statusText.setText("Sunucuya yükleniyor...");
-        runOnUiThread(()->updateProgressUI(0,targets.size(),"yükleniyor",System.currentTimeMillis()));
-
-        new Thread(()->{
-            try{
-                Random rng = new Random();
-
-                // ── 1. captionsMatrix oluştur ──────────────────────
-                // Her kişi için her albümün caption'ı hesaplanır
-                String msg = msgBox.getText().toString().trim();
-                List<String> phoneList = new ArrayList<>();
-                // JSON array: [[cap_alb0_kisi0, cap_alb1_kisi0], [cap_alb0_kisi1, ...], ...]
-                org.json.JSONArray captionsMatrix = new org.json.JSONArray();
-                for(C c : targets){
-                    phoneList.add(c.p);
-                    org.json.JSONArray personCaps = new org.json.JSONArray();
-                    if(!albums.isEmpty()){
-                        for(int ai=0; ai<albums.size(); ai++){
-                            String base = ai<albumCaptions.size() ? albumCaptions.get(ai) : msg;
-                            String cap  = base.replace("{isim}", c.n);
-                            cap = antiSpamText(randomCaptionStyle(cap), rng);
-                            personCaps.put(cap);
-                        }
-                    } else {
-                        // Tek medya modu
-                        String cap = msg.length()>0 ?
-                            antiSpamText(randomCaptionStyle(msg.replace("{isim}",c.n)),rng) : "";
-                        personCaps.put(cap);
-                    }
-                    captionsMatrix.put(personCaps);
-                }
-
-                // ── 2. albumCounts ─────────────────────────────────
-                org.json.JSONArray albumCountsArr = new org.json.JSONArray();
-                if(!albums.isEmpty()){
-                    for(ArrayList<String> alb : albums) albumCountsArr.put(alb.size());
-                } else {
-                    albumCountsArr.put(media.size());
-                }
-
-                // ── 3. Multipart body hazırla ──────────────────────
-                String boundary = "----KatalogV2"+System.currentTimeMillis();
-                HttpURLConnection conn = (HttpURLConnection)
-                    new URL(apiBase+"/api/queue-album-v2?token="+apiToken).openConnection();
-                conn.setConnectTimeout(120000);
-                conn.setReadTimeout(180000);
-                conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type","multipart/form-data; boundary="+boundary);
-
-                java.io.OutputStream os = conn.getOutputStream();
-                java.io.PrintStream ps  = new java.io.PrintStream(os,true,"UTF-8");
-
-                // phones (virgüllü)
-                v2Field(ps,os,boundary,"phones",String.join(",",phoneList));
-                // albumCounts JSON
-                v2Field(ps,os,boundary,"albumCounts",albumCountsArr.toString());
-                // captionsMatrix JSON
-                v2Field(ps,os,boundary,"captionsMatrix",captionsMatrix.toString());
-                // delay (kişi arası sn — sunucu kullanır)
-                v2Field(ps,os,boundary,"delay","8");
-
-                // ── 4. Fotoğrafları sırayla ekle ──────────────────
-                android.content.ContentResolver cr = getContentResolver();
-                List<ArrayList<String>> allAlbums = !albums.isEmpty() ? albums :
-                    new ArrayList<ArrayList<String>>(){{ add(new ArrayList<>(media)); }};
-
-                for(ArrayList<String> alb : allAlbums){
-                    for(int i=0; i<alb.size(); i++){
-                        Uri uri = Uri.parse(alb.get(i));
-                        String mime = cr.getType(uri);
-                        if(mime==null) mime="image/jpeg";
-                        String ext  = mime.contains("video")?"mp4":"jpg";
-
-                        ps.print("--"+boundary+"\r\n");
-                        ps.print("Content-Disposition: form-data; name=\"files\"; filename=\"media"+i+"."+ext+"\"\r\n");
-                        ps.print("Content-Type: "+mime+"\r\n\r\n");
-                        java.io.InputStream is = cr.openInputStream(uri);
-                        if(is!=null){
-                            byte[] buf=new byte[8192]; int n;
-                            while((n=is.read(buf))>-1) os.write(buf,0,n);
-                            is.close();
-                        }
-                        ps.print("\r\n");
-                    }
-                }
-                ps.print("--"+boundary+"--\r\n");
-                ps.flush();
-
-                // ── 5. Cevabı oku ─────────────────────────────────
-                int code = conn.getResponseCode();
-                String resp = readStream(code>=400 ? conn.getErrorStream() : conn.getInputStream());
-
-                if(code>=400){
-                    // Sunucu kabul etmedi — V1 fallback
-                    runOnUiThread(()->{
-                        toast("V2 başlatılamadı, eski motor devreye alınıyor...");
-                        useServerQueueV2=false;
-                        sending=false;
-                        startSend(); // V1
-                    });
-                    return;
-                }
-
-                org.json.JSONObject jr = new org.json.JSONObject(resp);
-                v2JobId = jr.optString("jobId","");
-
-                // Kaydedilmiş jobId — uygulama kapansa bile poll edilebilir
-                appPrefs().edit().putString("v2JobId",v2JobId).apply();
-
-                final int totalFinal = targets.size();
-                final long startMs   = System.currentTimeMillis();
-
-                runOnUiThread(()->{
-                    if(statusText!=null) statusText.setText("Sunucu kuyruğa aldı ✅");
-                    updateProgressUI(0,totalFinal,"sunucu gönderiliyor",startMs);
-                });
-
-                // ── 6. Poll döngüsü başlat ─────────────────────────
-                startV2Poll(totalFinal, startMs);
-
-            }catch(Exception e){
-                // Ağ/upload hatası — V1 fallback
-                runOnUiThread(()->{
-                    toast("V2 hatası: "+e.getMessage()+"\nEski motor devreye alınıyor...");
-                    useServerQueueV2=false;
-                    sending=false;
-                    startSend(); // V1
-                });
-            }
-        }).start();
-    }
-
-    // Multipart field yardımcısı
-    void v2Field(java.io.PrintStream ps, java.io.OutputStream os,
-                 String boundary, String name, String value) throws Exception {
-        ps.print("--"+boundary+"\r\n");
-        ps.print("Content-Disposition: form-data; name=\""+name+"\"\r\n\r\n");
-        os.write(value.getBytes("UTF-8"));
-        ps.print("\r\n");
-    }
-
-    // Poll başlat — her 3 saniyede /api/queue-status-v2 çek
-    void startV2Poll(int total, long startMs){
-        stopV2Poll(); // önceki varsa iptal et
-        v2PollRunnable = new Runnable(){
-            @Override public void run(){
-                if(!sending){ stopV2Poll(); return; }
-                new Thread(()->{
-                    try{
-                        String jobId = v2JobId!=null ? v2JobId :
-                            appPrefs().getString("v2JobId","");
-                        if(jobId.isEmpty()){ stopV2Poll(); return; }
-
-                        String resp = httpGet(apiBase+
-                            "/api/queue-status-v2?token="+apiToken+"&jobId="+jobId);
-                        org.json.JSONObject st = new org.json.JSONObject(resp);
-
-                        int okCount   = st.optInt("okCount",0);
-                        int failCount = st.optInt("failCount",0);
-                        int totalSrv  = st.optInt("total", total);
-                        String current= st.optString("current","");
-                        String status = st.optString("status","running");
-                        boolean done  = "done".equals(status) || "stopped".equals(status);
-
-                        // sent / queue listelerini güncelle
-                        try{
-                            org.json.JSONArray sentArr = st.optJSONArray("sent");
-                            if(sentArr!=null){
-                                sent.clear();
-                                for(int i=0;i<sentArr.length();i++) sent.add(sentArr.getString(i));
-                            }
-                        }catch(Exception ignored){}
-
-                        runOnUiThread(()->{
-                            updateProgressUI(okCount, totalSrv, current, startMs);
-                            if(queueText!=null)
-                                queueText.setText(String.valueOf(totalSrv-okCount-failCount));
-                            if(sentText!=null)
-                                sentText.setText(String.valueOf(okCount));
-                            if(statusText!=null){
-                                if(done) statusText.setText("Tamamlandı ✅ — "+okCount+"/"+totalSrv);
-                                else     statusText.setText("☁ Sunucu: "+current);
-                            }
-
-                            if(done){
-                                sending=false; stop=false;
-                                v2JobId=null;
-                                appPrefs().edit().remove("v2JobId").apply();
-                                sendButton.setText("GÖNDERİMİ YENİDEN BAŞLAT");
-                                sendButton.setBackground(grad(GREEN,darker(GREEN),14));
-                                stopV2Poll();
-                            }
-                        });
-
-                        if(!done){
-                            v2PollHandler.postDelayed(v2PollRunnable, 3000);
-                        }
-
-                    }catch(Exception e){
-                        // Geçici ağ hatası — tekrar dene
-                        if(sending) v2PollHandler.postDelayed(v2PollRunnable, 5000);
-                    }
-                }).start();
-            }
-        };
-        v2PollHandler.postDelayed(v2PollRunnable, 2000);
-    }
-
-    void stopV2Poll(){
-        if(v2PollRunnable!=null){
-            v2PollHandler.removeCallbacks(v2PollRunnable);
-            v2PollRunnable=null;
-        }
-    }
-
-    // Uygulama açılınca devam eden V2 job varsa resume et
-    void resumeV2IfNeeded(){
-        String savedJobId = appPrefs().getString("v2JobId","");
-        if(savedJobId.isEmpty()) return;
-        new Thread(()->{
-            try{
-                String resp = httpGet(apiBase+
-                    "/api/queue-status-v2?token="+apiToken+"&jobId="+savedJobId);
-                org.json.JSONObject st = new org.json.JSONObject(resp);
-                String status = st.optString("status","done");
-                if("running".equals(status) || "queued".equals(status)){
-                    v2JobId = savedJobId;
-                    int total = st.optInt("total",1);
-                    long startMs = System.currentTimeMillis();
-                    runOnUiThread(()->{
-                        sending=true;
-                        toast("Devam eden gönderim tespit edildi, takip ediliyor...");
-                        startV2Poll(total, startMs);
-                    });
-                } else {
-                    // İş bitti, jobId temizle
-                    appPrefs().edit().remove("v2JobId").apply();
-                }
-            }catch(Exception ignored){}
-        }).start();
-    }
-
-    // ══════════════════════════════════════════════════════════════════
+    void stopSend(){ stop=true; statusText.setText("Durduruluyor..."); }
 
     String antiSpamText(String original, Random rng){
         if(original==null||original.length()==0) return original;
@@ -2941,8 +2572,7 @@ void sendScreen(){
     void updateProgressUI(int done, int total, String currentName, long startMs){
         int percent = total<=0 ? 0 : (int)Math.round((done*100.0)/total);
         if(sendProgress!=null) sendProgress.setProgress(percent);
-        if(circularView!=null) circularView.setProgress(percent);
-        if(progressText!=null) progressText.setText(percent+"%");
+        if(progressText!=null) progressText.setText(percent+"% gönderildi");
         if(currentPersonText!=null) currentPersonText.setText("Şu an: "+(currentName==null||currentName.length()==0?"bekleniyor":currentName));
         if(etaText!=null){
             long elapsed = System.currentTimeMillis()-startMs;
@@ -2971,10 +2601,7 @@ void sendScreen(){
     }
 
 
-    void refreshQueue(){
-        if(sentText!=null) sentText.setText(String.valueOf(sent.size()));
-        if(queueText!=null) queueText.setText(String.valueOf(queue.size()));
-    }
+    void refreshQueue(){ if(queueText!=null)queueText.setText("Kuyrukta:\n"+(queue.isEmpty()?"Yok":join(queue,"\n"))); if(sentText!=null)sentText.setText("Gönderilen:\n"+(sent.isEmpty()?"Henüz yok":join(sent,"\n"))); }
 
     // Tüm medyaları albüm olarak tek seferde gönder
     void uploadAlbum(String phone, ArrayList<String> uris, String caption) throws Exception {
@@ -4058,100 +3685,6 @@ class DashboardCanvas extends View {
         }
     }
 
-
-    // ── Circular Progress View ──────────────────────────────────────
-    class CircularProgressView extends android.view.View {
-        private final android.graphics.Paint trackPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.Paint glowPaint  = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.Paint arcPaint   = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.Paint tickPaint  = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.Paint textPaint  = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.Paint subPaint   = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        private float progress = 0f;
-
-        CircularProgressView(android.content.Context ctx){
-            super(ctx);
-            trackPaint.setStyle(android.graphics.Paint.Style.STROKE);
-            trackPaint.setStrokeWidth(dp(18));
-            trackPaint.setColor(Color.rgb(28,28,28));
-            trackPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
-
-            glowPaint.setStyle(android.graphics.Paint.Style.STROKE);
-            glowPaint.setStrokeWidth(dp(28));
-            glowPaint.setColor(Color.argb(40,34,197,94));
-            glowPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
-            glowPaint.setMaskFilter(new android.graphics.BlurMaskFilter(dp(10), android.graphics.BlurMaskFilter.Blur.NORMAL));
-
-            arcPaint.setStyle(android.graphics.Paint.Style.STROKE);
-            arcPaint.setStrokeWidth(dp(18));
-            arcPaint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
-            arcPaint.setColor(Color.rgb(34,197,94));
-
-            tickPaint.setStyle(android.graphics.Paint.Style.STROKE);
-            tickPaint.setStrokeWidth(1.2f);
-            tickPaint.setColor(Color.rgb(38,38,38));
-
-            textPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
-            textPaint.setColor(Color.rgb(238,238,238));
-            textPaint.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-
-            subPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
-            subPaint.setColor(Color.rgb(72,72,72));
-        }
-
-        void setProgress(float p){ progress=Math.max(0,Math.min(100,p)); invalidate(); }
-
-        @Override
-        protected void onDraw(android.graphics.Canvas canvas){
-            super.onDraw(canvas);
-            float w=getWidth(), h=getHeight(), cx=w/2f, cy=h/2f;
-            float pad=dp(22);
-            float r=(Math.min(w,h)/2f)-pad;
-            android.graphics.RectF oval=new android.graphics.RectF(cx-r,cy-r,cx+r,cy+r);
-
-            // Tick marks
-            for(int i=0;i<30;i++){
-                float angle=(float)(i*12.0);
-                float rad=(float)Math.toRadians(angle-90);
-                boolean major=i%5==0;
-                float r1=r+dp(major?4:2), r2=r+dp(major?9:6);
-                canvas.drawLine(
-                    cx+(float)Math.cos(rad)*r1, cy+(float)Math.sin(rad)*r1,
-                    cx+(float)Math.cos(rad)*r2, cy+(float)Math.sin(rad)*r2,
-                    tickPaint);
-            }
-
-            // Track
-            canvas.drawArc(oval,-90,360,false,trackPaint);
-
-            // Glow + arc
-            float sweep=progress/100f*360f;
-            if(sweep>0){
-                canvas.drawArc(oval,-90,sweep,false,glowPaint);
-                android.graphics.LinearGradient shader=new android.graphics.LinearGradient(
-                    oval.left,oval.top,oval.right,oval.bottom,
-                    Color.rgb(22,163,74),Color.rgb(74,222,128),
-                    android.graphics.Shader.TileMode.CLAMP);
-                arcPaint.setShader(shader);
-                canvas.drawArc(oval,-90,sweep,false,arcPaint);
-            }
-
-            // % text
-            float ts=dp(34);
-            textPaint.setTextSize(ts);
-            canvas.drawText((int)progress+"%",cx,cy+ts*0.35f,textPaint);
-
-            // sub label
-            subPaint.setTextSize(dp(10));
-            canvas.drawText("tamamlandı",cx,cy+ts*0.35f+dp(11),subPaint);
-        }
-
-        @Override
-        protected void onMeasure(int w,int h){
-            int s=dp(170); setMeasuredDimension(s,s);
-        }
-    }
-    // ───────────────────────────────────────────────────────────────
 
     void invalidateDashboard(){
         try{
