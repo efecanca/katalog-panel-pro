@@ -4088,7 +4088,7 @@ class DashboardCanvas extends View {
             arcPaint.setColor(Color.rgb(34,197,94));
 
             tickPaint.setStyle(android.graphics.Paint.Style.STROKE);
-            tickPaint.setStrokeWidth(dp(1.2f));
+            tickPaint.setStrokeWidth(1.2f);
             tickPaint.setColor(Color.rgb(38,38,38));
 
             textPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
@@ -4142,7 +4142,7 @@ class DashboardCanvas extends View {
             canvas.drawText((int)progress+"%",cx,cy+ts*0.35f,textPaint);
 
             // sub label
-            subPaint.setTextSize(dp(6.5f));
+            subPaint.setTextSize(6.5f);
             canvas.drawText("tamamlandı",cx,cy+ts*0.35f+dp(11),subPaint);
         }
 
