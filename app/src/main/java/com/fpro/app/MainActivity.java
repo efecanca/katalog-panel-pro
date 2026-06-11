@@ -3524,7 +3524,7 @@ void settingsScreen(){
                 runOnUiThread(()->{
                     subDays.setText(daysTxt); subDays.setTextColor(dayColor);
                     subProgress.setIndeterminate(false); subProgress.setProgress(progressVal);
-                    android.graphics.drawable.ClipDrawable clip=(android.graphics.drawable.ClipDrawable)subProgress.getProgressDrawable();
+// DISABLED_CRASH_FIX                     android.graphics.drawable.ClipDrawable clip=(android.graphics.drawable.ClipDrawable)subProgress.getProgressDrawable();
                 });
             }catch(Exception ignored){
                 runOnUiThread(()->{ subDays.setText("—"); subProgress.setIndeterminate(false); });
