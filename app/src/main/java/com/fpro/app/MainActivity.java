@@ -1919,227 +1919,307 @@ void home(){
     }
 
     void mediaScreen(){
-        base("Albümler",false);
+        base("Medya & Albumler",false);
 
-        // ── Toplam istatistik ────────────────────────────────────
-        int totalPhotos=0;
-        for(ArrayList<String> al:albums) totalPhotos+=al.size();
-        int totalRecipients=getSelectedSendPhones().size();
+        // ── HERO HEADER ────────────────────────────────────────────────────
+        int totalPhotos=0; for(ArrayList<String> al:albums) totalPhotos+=al.size();
 
-        // Stat bar — 3 kutu yan yana
-        LinearLayout statBar=new LinearLayout(this);
-        statBar.setOrientation(LinearLayout.HORIZONTAL);
-        statBar.setWeightSum(3f);
-        LinearLayout.LayoutParams sbLp=new LinearLayout.LayoutParams(-1,-2);
-        sbLp.setMargins(0,0,0,dp(8));
-        statBar.setLayoutParams(sbLp);
+        LinearLayout hero=new LinearLayout(this);
+        hero.setOrientation(LinearLayout.VERTICAL);
+        hero.setPadding(dp(18),dp(18),dp(18),dp(18));
+        android.graphics.drawable.GradientDrawable heroBg=new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{0xFF1A1F2E,0xFF0D1117});
+        heroBg.setCornerRadius(dp(20)); heroBg.setStroke(dp(1),0xFF2D3748);
+        hero.setBackground(heroBg);
+        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);
+        heroLp.setMargins(0,dp(4),0,dp(10)); hero.setLayoutParams(heroLp);
 
-        String[] statVals={String.valueOf(albums.size()),String.valueOf(totalPhotos),String.valueOf(totalRecipients)};
-        String[] statKeys={"Albüm","Fotoğraf","Alıcı"};
-        int[] statColors={Color.WHITE, Color.WHITE, GREEN};
-        for(int s=0;s<3;s++){
-            LinearLayout sb2=new LinearLayout(this);
-            sb2.setOrientation(LinearLayout.VERTICAL);
-            sb2.setPadding(dp(12),dp(10),dp(12),dp(10));
-            sb2.setBackground(bg(Color.rgb(13,13,13),12));
-            LinearLayout.LayoutParams sLp=new LinearLayout.LayoutParams(0,-2,1f);
-            if(s>0) sLp.setMargins(dp(6),0,0,0);
-            sb2.setLayoutParams(sLp);
-            TextView sv=t(statVals[s],20,true,statColors[s]);
-            sv.setLetterSpacing(-0.02f);
-            TextView sk=t(statKeys[s],9,false,MUTED);
-            sk.setLetterSpacing(0.05f);
-            LinearLayout.LayoutParams skLp=new LinearLayout.LayoutParams(-2,-2);
-            skLp.setMargins(0,dp(2),0,0);
-            sb2.addView(sv);
-            sb2.addView(sk,skLp);
-            statBar.addView(sb2);
-        }
-        root.addView(statBar);
+        LinearLayout heroTop=new LinearLayout(this);
+        heroTop.setOrientation(LinearLayout.HORIZONTAL);
+        heroTop.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        heroTop.setPadding(0,0,0,dp(14));
 
-        // ── Albüm kartları ───────────────────────────────────────
+        // İkon kutusu
+        LinearLayout heroIconBox=new LinearLayout(this);
+        heroIconBox.setGravity(android.view.Gravity.CENTER);
+        android.graphics.drawable.GradientDrawable iconBoxBg=new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0xFF0891B2,0xFF0E6F8E});
+        iconBoxBg.setCornerRadius(dp(14)); iconBoxBg.setStroke(dp(1),0x660891B2);
+        heroIconBox.setBackground(iconBoxBg);
+        LinearLayout.LayoutParams ibLp=new LinearLayout.LayoutParams(dp(46),dp(46));
+        ibLp.setMargins(0,0,dp(12),0); heroIconBox.setLayoutParams(ibLp);
+        heroIconBox.addView(t("🗂",20,false,Color.WHITE));
+        heroTop.addView(heroIconBox);
+
+        LinearLayout heroTitles=new LinearLayout(this);
+        heroTitles.setOrientation(LinearLayout.VERTICAL);
+        heroTitles.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        TextView heroTitle=t("Albüm Yönetimi",20,true,Color.WHITE);
+        heroTitle.setPadding(0,0,0,dp(3));
+        heroTitles.addView(heroTitle);
+        heroTitles.addView(t("Toplu gönderim için medya albümleri",12,false,0xFF8892A4));
+        heroTop.addView(heroTitles);
+        hero.addView(heroTop);
+
+        // Stat pill'leri
+        LinearLayout pillRow=new LinearLayout(this);
+        pillRow.setOrientation(LinearLayout.HORIZONTAL);
+        pillRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+        LinearLayout pill1=new LinearLayout(this); pill1.setOrientation(LinearLayout.HORIZONTAL);
+        pill1.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        pill1.setPadding(dp(12),dp(6),dp(12),dp(6));
+        android.graphics.drawable.GradientDrawable p1b=new android.graphics.drawable.GradientDrawable();
+        p1b.setColor(0xFF1E2D45); p1b.setCornerRadius(dp(20)); p1b.setStroke(dp(1),0xFF1F6FEB);
+        pill1.setBackground(p1b);
+        pill1.addView(t("📁 "+albums.size()+" albüm",12,true,0xFF58A6FF));
+        LinearLayout.LayoutParams p1lp=new LinearLayout.LayoutParams(-2,-2);
+        p1lp.setMargins(0,0,dp(8),0); pill1.setLayoutParams(p1lp);
+        pillRow.addView(pill1);
+
+        LinearLayout pill2=new LinearLayout(this); pill2.setOrientation(LinearLayout.HORIZONTAL);
+        pill2.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        pill2.setPadding(dp(12),dp(6),dp(12),dp(6));
+        android.graphics.drawable.GradientDrawable p2b=new android.graphics.drawable.GradientDrawable();
+        p2b.setColor(0xFF1E3128); p2b.setCornerRadius(dp(20)); p2b.setStroke(dp(1),0xFF3FB950);
+        pill2.setBackground(p2b);
+        pill2.addView(t("🖼 "+totalPhotos+" fotoğraf",12,true,0xFF3FB950));
+        pill2.setLayoutParams(new LinearLayout.LayoutParams(-2,-2));
+        pillRow.addView(pill2);
+        hero.addView(pillRow);
+        root.addView(hero);
+
+        // ── ALBÜM KARTLARI ─────────────────────────────────────────────────
+        int[] albumColors={0xFF4F46E5,0xFF0891B2,0xFF059669,0xFFD97706,0xFF7C3AED,0xFFDC2626};
+        int screenW=getResources().getDisplayMetrics().widthPixels;
+        // 3-sütun grid: padding 14*2=28, gap 3*2=6 → toplam kullanılan: 34
+        int cellSize=(screenW - dp(28) - dp(6)) / 3;
+
         for(int idx=0;idx<albums.size();idx++){
             final int aIdx=idx;
             ArrayList<String> photos=albums.get(idx);
             String caption=idx<albumCaptions.size()?albumCaptions.get(idx):"";
+            int color=albumColors[idx%albumColors.length];
+            int colorDim=(color & 0x00FFFFFF)|0x22000000;
 
-            // Kart
+            // Dış kart
             LinearLayout aCard=new LinearLayout(this);
             aCard.setOrientation(LinearLayout.VERTICAL);
-            aCard.setBackground(bg(Color.rgb(13,13,13),18));
-            LinearLayout.LayoutParams acLp=new LinearLayout.LayoutParams(-1,-2);
-            acLp.setMargins(0,0,0,0);
-            aCard.setLayoutParams(acLp);
+            aCard.setClipToOutline(true);
+            android.graphics.drawable.GradientDrawable cardBg=new android.graphics.drawable.GradientDrawable();
+            cardBg.setColor(0xFF141921); cardBg.setCornerRadius(dp(20));
+            cardBg.setStroke(dp(1),0xFF2D3748);
+            aCard.setBackground(cardBg);
+            LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
+            cardLp.setMargins(0,dp(5),0,dp(5)); aCard.setLayoutParams(cardLp);
 
-            // ── Kart üstü: drag göstergesi + meta + sil ─────────
-            LinearLayout aTop=new LinearLayout(this);
-            aTop.setOrientation(LinearLayout.HORIZONTAL);
-            aTop.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            aTop.setPadding(dp(14),dp(14),dp(14),0);
+            // Renkli üst şerit (3dp)
+            android.view.View stripe=new android.view.View(this);
+            android.graphics.drawable.GradientDrawable stripeBg=new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[]{color, darker(color)});
+            stripeBg.setCornerRadii(new float[]{dp(20),dp(20),dp(20),dp(20),0,0,0,0});
+            stripe.setBackground(stripeBg);
+            aCard.addView(stripe, new LinearLayout.LayoutParams(-1,dp(3)));
 
-            // Drag handle (3 çizgi)
-            LinearLayout drag=new LinearLayout(this);
-            drag.setOrientation(LinearLayout.VERTICAL);
-            drag.setPadding(0,0,dp(10),0);
-            for(int d=0;d<3;d++){
-                android.view.View line=new android.view.View(this);
-                line.setBackgroundColor(Color.rgb(40,40,40));
-                LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(16),dp(2));
-                if(d>0) dlp.setMargins(0,dp(3),0,0);
-                drag.addView(line,dlp);
-            }
+            // ── Başlık satırı ──
+            LinearLayout aHead=new LinearLayout(this);
+            aHead.setOrientation(LinearLayout.HORIZONTAL);
+            aHead.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            aHead.setPadding(dp(14),dp(14),dp(14),dp(12));
+            android.graphics.drawable.GradientDrawable headDiv=new android.graphics.drawable.GradientDrawable();
+            // alt border için wrapper yerine sonraya bırakıyoruz
 
-            // Meta: "Albüm 01" + foto sayısı
-            LinearLayout aMeta=new LinearLayout(this);
-            aMeta.setOrientation(LinearLayout.VERTICAL);
-            aMeta.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1f));
-            TextView aNum=t("ALBÜM "+String.format("%02d",idx+1),10,true,MUTED);
-            aNum.setLetterSpacing(0.06f);
-            TextView aPhotoCount=t(photos.size()+" fotoğraf",22,true,Color.WHITE);
-            aPhotoCount.setLetterSpacing(-0.02f);
-            aMeta.addView(aNum);
-            LinearLayout.LayoutParams apcLp=new LinearLayout.LayoutParams(-2,-2);
-            apcLp.setMargins(0,dp(1),0,0);
-            aMeta.addView(aPhotoCount,apcLp);
+            // Numara badge
+            TextView numBadge=new TextView(this);
+            numBadge.setText(String.valueOf(idx+1));
+            numBadge.setTextSize(13); numBadge.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.BOLD));
+            numBadge.setTextColor(Color.WHITE); numBadge.setGravity(android.view.Gravity.CENTER);
+            android.graphics.drawable.GradientDrawable nbBg=new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,new int[]{color,darker(color)});
+            nbBg.setCornerRadius(dp(10));
+            numBadge.setBackground(nbBg);
+            LinearLayout.LayoutParams nbLp=new LinearLayout.LayoutParams(dp(32),dp(32));
+            nbLp.setMargins(0,0,dp(12),0); numBadge.setLayoutParams(nbLp);
+            aHead.addView(numBadge);
+
+            // Bilgi
+            LinearLayout aInfo=new LinearLayout(this);
+            aInfo.setOrientation(LinearLayout.VERTICAL);
+            aInfo.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+            TextView aTitle=t("Albüm "+(idx+1),15,true,Color.WHITE);
+            aTitle.setPadding(0,0,0,dp(2));
+            aInfo.addView(aTitle);
+            String subTxt=photos.isEmpty()?"Henüz fotoğraf yok":photos.size()+" fotoğraf";
+            aInfo.addView(t(subTxt,11,false,0xFF5A6478));
+            aHead.addView(aInfo);
 
             // Sil butonu
-            TextView delAlbum=new TextView(this);
-            delAlbum.setText("✕");
-            delAlbum.setTextSize(12); delAlbum.setTextColor(Color.rgb(192,57,43));
-            delAlbum.setGravity(android.view.Gravity.CENTER);
+            TextView delBtn=new TextView(this);
+            delBtn.setText("🗑"); delBtn.setTextSize(15); delBtn.setGravity(android.view.Gravity.CENTER);
             android.graphics.drawable.GradientDrawable delBg=new android.graphics.drawable.GradientDrawable();
-            delBg.setColor(Color.rgb(22,13,13)); delBg.setCornerRadius(dp(10));
-            delBg.setStroke(dp(1),Color.rgb(46,21,21));
-            delAlbum.setBackground(delBg);
-            delAlbum.setPadding(dp(10),dp(8),dp(10),dp(8));
-            delAlbum.setOnClickListener(v->{
-                albums.remove(aIdx);
-                if(aIdx<albumCaptions.size()) albumCaptions.remove(aIdx);
-                save(); mediaScreen();
+            delBg.setColor(0xFF1E1215); delBg.setCornerRadius(dp(10)); delBg.setStroke(dp(1),0xFF3D1515);
+            delBtn.setBackground(delBg); delBtn.setPadding(dp(10),dp(8),dp(10),dp(8));
+            delBtn.setOnClickListener(v->{
+                new android.app.AlertDialog.Builder(this)
+                    .setTitle("Albümü Sil")
+                    .setMessage("Albüm "+(aIdx+1)+" silinsin mi?")
+                    .setPositiveButton("Sil",(d,w)->{
+                        albums.remove(aIdx);
+                        if(aIdx<albumCaptions.size()) albumCaptions.remove(aIdx);
+                        save(); mediaScreen();
+                    }).setNegativeButton("İptal",null).show();
             });
+            aHead.addView(delBtn);
+            aCard.addView(aHead);
 
-            aTop.addView(drag);
-            aTop.addView(aMeta);
-            aTop.addView(delAlbum);
-            aCard.addView(aTop);
+            // Alt ayraç
+            android.view.View hDiv=new android.view.View(this);
+            hDiv.setBackgroundColor(0xFF1E2533);
+            aCard.addView(hDiv,new LinearLayout.LayoutParams(-1,dp(1)));
 
-            // ── Fotoğraf strip (yatay scroll) ───────────────────
-            android.widget.HorizontalScrollView hsv=new android.widget.HorizontalScrollView(this);
-            hsv.setHorizontalScrollBarEnabled(false);
-            LinearLayout row=new LinearLayout(this);
-            row.setOrientation(LinearLayout.HORIZONTAL);
-            row.setPadding(dp(14),dp(12),dp(14),dp(12));
-            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            // ── FOTOĞRAF GRID veya EMPTY STATE ──
+            if(photos.isEmpty()){
+                // Boş state — büyük tıklanabilir alan
+                LinearLayout emptyState=new LinearLayout(this);
+                emptyState.setOrientation(LinearLayout.VERTICAL);
+                emptyState.setGravity(android.view.Gravity.CENTER);
+                emptyState.setPadding(dp(16),dp(28),dp(16),dp(28));
+                emptyState.setBackgroundColor(0xFF0D1117);
+                emptyState.setOnClickListener(v->{ pickingAlbumIdx=aIdx; galleryPickerForAlbum(); });
 
-            // Max 4 foto göster, fazlası "+N" chip
-            int maxShow=4;
-            int showCount=Math.min(photos.size(),maxShow);
-            for(int pi=0;pi<showCount;pi++){
-                final int pIdx=pi;
-                String photoUri=photos.get(pi);
-                android.widget.FrameLayout pFrame=new android.widget.FrameLayout(this);
-                LinearLayout.LayoutParams fLp=new LinearLayout.LayoutParams(dp(58),dp(58));
-                fLp.setMargins(0,0,dp(4),0);
-                pFrame.setLayoutParams(fLp);
+                TextView emptyIcon=t("🖼",30,false,Color.WHITE);
+                emptyIcon.setGravity(android.view.Gravity.CENTER);
+                emptyIcon.setAlpha(0.35f);
+                emptyState.addView(emptyIcon);
 
-                ImageView img=new ImageView(this);
-                img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                android.graphics.drawable.GradientDrawable imgBg=new android.graphics.drawable.GradientDrawable();
-                imgBg.setColor(Color.rgb(26,26,26)); imgBg.setCornerRadius(dp(10));
-                img.setBackground(imgBg);
-                try{ img.setImageURI(Uri.parse(photoUri)); }
-                catch(Throwable ignored){}
-                img.setOnClickListener(v->{ photos.remove(pIdx); save(); mediaScreen(); });
-                android.widget.FrameLayout.LayoutParams imgFLp=new android.widget.FrameLayout.LayoutParams(-1,-1);
-                pFrame.addView(img,imgFLp);
+                TextView emptyLbl=t("Fotoğraf Ekle",13,true,0xFF3A4455);
+                emptyLbl.setGravity(android.view.Gravity.CENTER);
+                LinearLayout.LayoutParams elLp=new LinearLayout.LayoutParams(-1,-2);
+                elLp.setMargins(0,dp(8),0,dp(4)); emptyLbl.setLayoutParams(elLp);
+                emptyState.addView(emptyLbl);
 
-                // ✕ badge
-                TextView xBadge=new TextView(this);
-                xBadge.setText("✕");
-                xBadge.setTextSize(8); xBadge.setTextColor(Color.rgb(239,68,68));
-                xBadge.setGravity(android.view.Gravity.CENTER);
-                android.graphics.drawable.GradientDrawable xBg=new android.graphics.drawable.GradientDrawable();
-                xBg.setColor(Color.argb(200,0,0,0)); xBg.setCornerRadius(dp(99));
-                xBadge.setBackground(xBg);
-                android.widget.FrameLayout.LayoutParams xLp=
-                    new android.widget.FrameLayout.LayoutParams(dp(16),dp(16));
-                xLp.gravity=android.view.Gravity.TOP|android.view.Gravity.RIGHT;
-                xLp.setMargins(0,dp(3),dp(3),0);
-                pFrame.addView(xBadge,xLp);
+                TextView emptySub=t("Buraya dokun ve galeriden seç",11,false,0xFF2D3748);
+                emptySub.setGravity(android.view.Gravity.CENTER);
+                emptyState.addView(emptySub);
+                aCard.addView(emptyState);
+            } else {
+                // 3 sütun grid
+                android.widget.GridLayout grid=new android.widget.GridLayout(this);
+                grid.setColumnCount(3);
+                grid.setBackgroundColor(0xFF0D1117);
+                grid.setPadding(dp(3),dp(3),dp(3),dp(3));
 
-                row.addView(pFrame);
+                for(int pi=0;pi<photos.size();pi++){
+                    final int pIdx=pi;
+                    String uri=photos.get(pi);
+
+                    android.widget.FrameLayout cell=new android.widget.FrameLayout(this);
+                    android.widget.GridLayout.LayoutParams glp=new android.widget.GridLayout.LayoutParams();
+                    glp.width=cellSize; glp.height=cellSize;
+                    glp.setMargins(dp(2),dp(2),dp(2),dp(2));
+                    cell.setLayoutParams(glp);
+
+                    ImageView img=new ImageView(this);
+                    img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    android.graphics.drawable.GradientDrawable imgBg=new android.graphics.drawable.GradientDrawable();
+                    imgBg.setColor(0xFF1E2533); imgBg.setCornerRadius(dp(4));
+                    img.setBackground(imgBg);
+                    try{ img.setImageURI(Uri.parse(uri)); }catch(Throwable ignored){}
+                    cell.addView(img,new android.widget.FrameLayout.LayoutParams(-1,-1));
+
+                    // Gradient overlay
+                    android.view.View overlay=new android.view.View(this);
+                    android.graphics.drawable.GradientDrawable ovBg=new android.graphics.drawable.GradientDrawable(
+                        android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+                        new int[]{0x88000000,0x00000000});
+                    overlay.setBackground(ovBg);
+                    cell.addView(overlay,new android.widget.FrameLayout.LayoutParams(-1,-1));
+
+                    // Sil badge
+                    TextView xBtn=new TextView(this);
+                    xBtn.setText("✕"); xBtn.setTextSize(9); xBtn.setTextColor(Color.WHITE);
+                    xBtn.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.BOLD));
+                    xBtn.setGravity(android.view.Gravity.CENTER);
+                    android.graphics.drawable.GradientDrawable xBg=new android.graphics.drawable.GradientDrawable();
+                    xBg.setColor(0xBB000000); xBg.setCornerRadius(dp(5));
+                    xBtn.setBackground(xBg); xBtn.setPadding(dp(5),dp(2),dp(5),dp(2));
+                    android.widget.FrameLayout.LayoutParams xLp=new android.widget.FrameLayout.LayoutParams(-2,-2,android.view.Gravity.TOP|android.view.Gravity.END);
+                    xLp.setMargins(0,dp(5),dp(5),0); xBtn.setLayoutParams(xLp);
+                    xBtn.setOnClickListener(v->{ photos.remove(pIdx); save(); mediaScreen(); });
+                    cell.addView(xBtn);
+                    grid.addView(cell);
+                }
+
+                // + Ekle hücresi
+                android.widget.FrameLayout addCell=new android.widget.FrameLayout(this);
+                android.widget.GridLayout.LayoutParams addGlp=new android.widget.GridLayout.LayoutParams();
+                addGlp.width=cellSize; addGlp.height=cellSize;
+                addGlp.setMargins(dp(2),dp(2),dp(2),dp(2));
+                addCell.setLayoutParams(addGlp);
+
+                LinearLayout addInner=new LinearLayout(this);
+                addInner.setOrientation(LinearLayout.VERTICAL);
+                addInner.setGravity(android.view.Gravity.CENTER);
+                android.graphics.drawable.GradientDrawable addCellBg=new android.graphics.drawable.GradientDrawable();
+                addCellBg.setColor(0xFF0D1117); addCellBg.setCornerRadius(dp(4));
+                addCellBg.setStroke(dp(2),0xFF2D3748);
+                addInner.setBackground(addCellBg);
+                addInner.setOnClickListener(v->{ pickingAlbumIdx=aIdx; galleryPickerForAlbum(); });
+
+                TextView addPlus=t("＋",22,false,0xFF3A4455);
+                addPlus.setGravity(android.view.Gravity.CENTER);
+                addInner.addView(addPlus);
+                TextView addLbl=t("Ekle",9,true,0xFF3A4455);
+                addLbl.setGravity(android.view.Gravity.CENTER);
+                addInner.addView(addLbl);
+
+                addCell.addView(addInner,new android.widget.FrameLayout.LayoutParams(-1,-1));
+                grid.addView(addCell);
+                aCard.addView(grid);
             }
 
-            // "+N daha" chip
-            if(photos.size()>maxShow){
-                LinearLayout moreBox=new LinearLayout(this);
-                moreBox.setOrientation(LinearLayout.VERTICAL);
-                moreBox.setGravity(android.view.Gravity.CENTER);
-                moreBox.setBackground(bg(Color.rgb(22,22,22),10));
-                LinearLayout.LayoutParams mLp=new LinearLayout.LayoutParams(dp(58),dp(58));
-                mLp.setMargins(0,0,dp(4),0);
-                moreBox.setLayoutParams(mLp);
-                TextView moreN=t("+"+(photos.size()-maxShow),15,true,Color.rgb(70,70,70));
-                moreN.setGravity(android.view.Gravity.CENTER);
-                TextView moreL=t("daha",9,false,Color.rgb(42,42,42));
-                moreL.setGravity(android.view.Gravity.CENTER);
-                moreBox.addView(moreN); moreBox.addView(moreL);
-                row.addView(moreBox);
-            }
+            // Ayraç
+            android.view.View cDiv=new android.view.View(this);
+            cDiv.setBackgroundColor(0xFF1E2533);
+            aCard.addView(cDiv,new LinearLayout.LayoutParams(-1,dp(1)));
 
-            // + Ekle kutusu
-            LinearLayout addBox=new LinearLayout(this);
-            addBox.setOrientation(LinearLayout.VERTICAL);
-            addBox.setGravity(android.view.Gravity.CENTER);
-            android.graphics.drawable.GradientDrawable addBgD=new android.graphics.drawable.GradientDrawable();
-            addBgD.setColor(Color.rgb(15,15,15)); addBgD.setCornerRadius(dp(10));
-            addBgD.setStroke(dp(1),Color.rgb(38,38,38));
-            addBox.setBackground(addBgD);
-            LinearLayout.LayoutParams addLp=new LinearLayout.LayoutParams(dp(58),dp(58));
-            addLp.setMargins(0,0,dp(4),0);
-            addBox.setLayoutParams(addLp);
-            TextView addIcon=t("+",20,false,Color.rgb(42,42,42));
-            addIcon.setGravity(android.view.Gravity.CENTER);
-            addBox.addView(addIcon);
-            addBox.setOnClickListener(v->{ pickingAlbumIdx=aIdx; galleryPickerForAlbum(); });
-            row.addView(addBox);
-
-            hsv.addView(row);
-            aCard.addView(hsv);
-
-            // ── Ayraç ────────────────────────────────────────────
-            android.view.View capDiv=new android.view.View(this);
-            capDiv.setBackgroundColor(Color.rgb(26,26,26));
-            aCard.addView(capDiv,new LinearLayout.LayoutParams(-1,dp(1)));
-
-            // ── Caption input ────────────────────────────────────
+            // ── MESAJ KUTUSU ──
             LinearLayout capWrap=new LinearLayout(this);
             capWrap.setOrientation(LinearLayout.VERTICAL);
-            capWrap.setPadding(dp(14),dp(10),dp(14),dp(14));
+            capWrap.setPadding(dp(14),dp(12),dp(14),dp(14));
 
-            TextView capLabel=t("MESAJ",9,true,Color.rgb(42,42,42));
-            capLabel.setLetterSpacing(0.08f);
-            LinearLayout.LayoutParams clLp=new LinearLayout.LayoutParams(-2,-2);
-            clLp.setMargins(0,0,0,dp(6));
-            capWrap.addView(capLabel,clLp);
+            LinearLayout capLabelRow=new LinearLayout(this);
+            capLabelRow.setOrientation(LinearLayout.HORIZONTAL);
+            capLabelRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            capLabelRow.setPadding(0,0,0,dp(8));
+            capLabelRow.addView(t("✉",13,false,color));
+            TextView capLabel=t("  Albüm mesajı",11,true,0xFF5A6478);
+            capLabel.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+            capLabelRow.addView(capLabel);
+            TextView tagBadge=t("{isim}",10,true,color);
+            tagBadge.setPadding(dp(6),dp(2),dp(6),dp(2));
+            android.graphics.drawable.GradientDrawable tagBg=new android.graphics.drawable.GradientDrawable();
+            tagBg.setColor(colorDim); tagBg.setCornerRadius(dp(6));
+            tagBadge.setBackground(tagBg);
+            capLabelRow.addView(tagBadge);
+            capWrap.addView(capLabelRow);
 
-            // Caption box
-            LinearLayout capBox=new LinearLayout(this);
-            capBox.setOrientation(LinearLayout.VERTICAL);
-            capBox.setBackground(bg(Color.rgb(10,10,10),12));
-            android.graphics.drawable.GradientDrawable capBorder=new android.graphics.drawable.GradientDrawable();
-            capBorder.setColor(Color.rgb(10,10,10)); capBorder.setCornerRadius(dp(12));
-            capBorder.setStroke(dp(1),Color.rgb(30,30,30));
-            capBox.setBackground(capBorder);
+            LinearLayout capInputWrap=new LinearLayout(this);
+            capInputWrap.setOrientation(LinearLayout.VERTICAL);
+            android.graphics.drawable.GradientDrawable ciwBg=new android.graphics.drawable.GradientDrawable();
+            ciwBg.setColor(0xFF0D1117); ciwBg.setCornerRadius(dp(10)); ciwBg.setStroke(dp(1),0xFF2D3748);
+            capInputWrap.setBackground(ciwBg);
+            capInputWrap.setPadding(dp(12),dp(10),dp(12),dp(10));
 
             final EditText capInput=new EditText(this);
             capInput.setText(caption);
-            capInput.setHint("Ürün adı, açıklama...");
-            capInput.setHintTextColor(Color.rgb(38,38,38));
-            capInput.setTextColor(Color.rgb(200,200,200));
-            capInput.setTextSize(13);
-            capInput.setBackground(null);
-            capInput.setPadding(dp(12),dp(10),dp(12),dp(6));
+            capInput.setHint("Ürün adı, fiyat, detay...");
+            capInput.setTextColor(Color.WHITE); capInput.setHintTextColor(0xFF3A4455);
+            capInput.setTextSize(13); capInput.setBackground(null);
+            capInput.setPadding(0,0,0,0);
+            capInput.setMinLines(1); capInput.setMaxLines(3);
             capInput.setOnFocusChangeListener((v,hasFocus)->{
                 if(!hasFocus){
                     while(albumCaptions.size()<=aIdx) albumCaptions.add("");
@@ -2147,97 +2227,43 @@ void home(){
                     save();
                 }
             });
-            capBox.addView(capInput);
-
-            // Caption footer: {isim} chip + hint
-            LinearLayout capFooter=new LinearLayout(this);
-            capFooter.setOrientation(LinearLayout.HORIZONTAL);
-            capFooter.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            capFooter.setPadding(dp(12),0,dp(12),dp(8));
-            TextView isimChip=new TextView(this);
-            isimChip.setText("{isim}");
-            isimChip.setTextSize(10); isimChip.setTextColor(Color.rgb(80,80,80));
-            isimChip.setTypeface(android.graphics.Typeface.MONOSPACE);
-            android.graphics.drawable.GradientDrawable chipBg=new android.graphics.drawable.GradientDrawable();
-            chipBg.setColor(Color.rgb(22,22,22)); chipBg.setCornerRadius(dp(6));
-            chipBg.setStroke(dp(1),Color.rgb(34,34,34));
-            isimChip.setBackground(chipBg);
-            isimChip.setPadding(dp(6),dp(2),dp(6),dp(2));
-            isimChip.setOnClickListener(v->{
-                int pos=capInput.getSelectionStart();
-                capInput.getText().insert(pos,"{isim}");
-            });
-            TextView chipHint=t(" → kişi adıyla değişir",10,false,Color.rgb(38,38,38));
-            LinearLayout.LayoutParams chLp=new LinearLayout.LayoutParams(-2,-2);
-            chLp.setMargins(dp(6),0,0,0);
-            capFooter.addView(isimChip);
-            capFooter.addView(chipHint,chLp);
-            capBox.addView(capFooter);
-
-            capWrap.addView(capBox);
+            capInputWrap.addView(capInput);
+            capWrap.addView(capInputWrap);
             aCard.addView(capWrap);
             root.addView(aCard);
-
-            // ── Albümler arası "↓ ardından" bölücü ──────────────
-            if(idx<albums.size()-1){
-                LinearLayout between=new LinearLayout(this);
-                between.setOrientation(LinearLayout.HORIZONTAL);
-                between.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                LinearLayout.LayoutParams bwLp=new LinearLayout.LayoutParams(-1,-2);
-                bwLp.setMargins(0,dp(6),0,dp(6));
-                between.setLayoutParams(bwLp);
-                android.view.View bLine1=new android.view.View(this);
-                bLine1.setBackgroundColor(Color.rgb(26,26,26));
-                between.addView(bLine1,new LinearLayout.LayoutParams(0,dp(1),1f));
-                TextView bChip=t("↓ ardından",10,false,Color.rgb(40,40,40));
-                bChip.setPadding(dp(10),dp(4),dp(10),dp(4));
-                bChip.setBackground(bg(Color.rgb(13,13,13),99));
-                between.addView(bChip);
-                android.view.View bLine2=new android.view.View(this);
-                bLine2.setBackgroundColor(Color.rgb(26,26,26));
-                between.addView(bLine2,new LinearLayout.LayoutParams(0,dp(1),1f));
-                root.addView(between);
-            }
         }
 
-        // ── + Yeni Albüm Ekle ────────────────────────────────────
-        LinearLayout.LayoutParams addAlbLp=new LinearLayout.LayoutParams(-1,-2);
-        addAlbLp.setMargins(0,dp(10),0,dp(6));
-        TextView addAlbum=new TextView(this);
-        addAlbum.setText("+ Yeni Albüm Ekle");
-        addAlbum.setTextSize(13); addAlbum.setTextColor(Color.rgb(55,55,55));
-        addAlbum.setGravity(android.view.Gravity.CENTER);
-        addAlbum.setTypeface(null,android.graphics.Typeface.BOLD);
-        addAlbum.setPadding(0,dp(16),0,dp(16));
-        android.graphics.drawable.GradientDrawable addAlbBg=new android.graphics.drawable.GradientDrawable();
-        addAlbBg.setColor(Color.rgb(13,13,13)); addAlbBg.setCornerRadius(dp(14));
-        addAlbBg.setStroke(dp(1),Color.rgb(32,32,32));
-        addAlbum.setBackground(addAlbBg);
-        addAlbum.setLayoutParams(addAlbLp);
-        addAlbum.setOnClickListener(v->{
+        // ── YENİ ALBÜM EKLE (dashed outlined) ─────────────────────────────
+        LinearLayout addAlbumBtn=new LinearLayout(this);
+        addAlbumBtn.setOrientation(LinearLayout.HORIZONTAL);
+        addAlbumBtn.setGravity(android.view.Gravity.CENTER);
+        addAlbumBtn.setPadding(dp(16),dp(15),dp(16),dp(15));
+        android.graphics.drawable.GradientDrawable addAlbumBg=new android.graphics.drawable.GradientDrawable();
+        addAlbumBg.setColor(0x141F6FEB); addAlbumBg.setCornerRadius(dp(18));
+        addAlbumBg.setStroke(dp(2),0x551F6FEB);
+        addAlbumBtn.setBackground(addAlbumBg);
+        LinearLayout.LayoutParams addLp=new LinearLayout.LayoutParams(-1,-2);
+        addLp.setMargins(0,dp(4),0,dp(8)); addAlbumBtn.setLayoutParams(addLp);
+
+        // İkon kutusu
+        LinearLayout addIconBox=new LinearLayout(this);
+        addIconBox.setGravity(android.view.Gravity.CENTER);
+        android.graphics.drawable.GradientDrawable aibBg=new android.graphics.drawable.GradientDrawable();
+        aibBg.setColor(0x221F6FEB); aibBg.setCornerRadius(dp(10)); aibBg.setStroke(dp(1),0x441F6FEB);
+        addIconBox.setBackground(aibBg);
+        LinearLayout.LayoutParams aibLp=new LinearLayout.LayoutParams(dp(32),dp(32));
+        aibLp.setMargins(0,0,dp(10),0); addIconBox.setLayoutParams(aibLp);
+        addIconBox.addView(t("＋",16,true,0xFF58A6FF));
+        addAlbumBtn.addView(addIconBox);
+        addAlbumBtn.addView(t("Yeni Albüm Ekle",14,true,0xFF58A6FF));
+        addAlbumBtn.setOnClickListener(v->{
             albums.add(new ArrayList<>());
             albumCaptions.add("");
             save(); mediaScreen();
         });
-        root.addView(addAlbum);
+        root.addView(addAlbumBtn);
 
-        // ── Gönderime Geç ────────────────────────────────────────
-        int tpFinal=totalPhotos;
-        int trFinal=totalRecipients;
-        TextView gotoSend=btn("Gönderime Geç →",GREEN);
-        LinearLayout.LayoutParams gsLp=new LinearLayout.LayoutParams(-1,-2);
-        gsLp.setMargins(0,dp(4),0,dp(4));
-        gotoSend.setLayoutParams(gsLp);
-        gotoSend.setOnClickListener(v->sendScreen());
-        root.addView(gotoSend);
-
-        // Özet hint
-        TextView hint=t(albums.size()+" albüm · "+tpFinal+" foto · "+trFinal+" kişiye gönderilecek",
-            11,false,MUTED);
-        hint.setGravity(android.view.Gravity.CENTER);
-        root.addView(hint);
-
-        // ── Eski tek medya uyumluluğu ────────────────────────────
+        // ── Eski medya migration ───────────────────────────────────────────
         if(!media.isEmpty() && albums.isEmpty()){
             LinearLayout legacyCard=card();
             legacyCard.addView(t("Eski Medya ("+media.size()+" foto)",14,true,YELLOW));
