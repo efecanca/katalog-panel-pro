@@ -2503,10 +2503,12 @@ void home(){
         appPrefs().edit().putLong("scheduledSendAt",scheduledSendAt).apply();
     }
 
+
     void loadSchedule(){
         scheduledSendAt=appPrefs().getLong("scheduledSendAt",0);
         if(scheduledSendAt>System.currentTimeMillis()) startScheduleWatcher();
     }
+
 
     String scheduleText(){
         if(scheduledSendAt<=0) return "Zamanlı gönderim yok";
@@ -2533,6 +2535,7 @@ void home(){
             }
         },delay);
     }
+
 
 
     
@@ -2678,6 +2681,7 @@ void sendScreen(){
         }
         root.addView(live);
     }
+
 
 
     void chooseListDialog(){
@@ -3353,10 +3357,89 @@ void sendScreen(){
 void settingsScreen(){
         base("Ayarlar",false);
 
-        LinearLayout c=card();
-        c.addView(t("Ayarlar",24,true,Color.WHITE));
-        c.addView(t("Aktif Kullanici: "+loginUser,13,false,MUTED));
-        // Abonelik suresi
+        // ── USER HERO ──────────────────────────────────────────────────────
+        LinearLayout hero=new LinearLayout(this);
+        hero.setOrientation(LinearLayout.VERTICAL);
+        hero.setPadding(dp(18),dp(18),dp(18),dp(16));
+        android.graphics.drawable.GradientDrawable heroBg=new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.BR_TL,
+            new int[]{0xFF1A1F2E,0xFF0D1117,0xFF12101A});
+        heroBg.setCornerRadius(dp(20)); heroBg.setStroke(dp(1),0xFF2D3748);
+        hero.setBackground(heroBg);
+        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);
+        heroLp.setMargins(0,dp(4),0,dp(10)); hero.setLayoutParams(heroLp);
+
+        // Avatar + isim satırı
+        LinearLayout userRow=new LinearLayout(this);
+        userRow.setOrientation(LinearLayout.HORIZONTAL);
+        userRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        userRow.setPadding(0,0,0,dp(14));
+
+        LinearLayout avatar=new LinearLayout(this);
+        avatar.setGravity(android.view.Gravity.CENTER);
+        android.graphics.drawable.GradientDrawable avBg=new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{0xFF4F46E5,0xFF7C3AED});
+        avBg.setCornerRadius(dp(14)); avBg.setStroke(dp(1),0x664F46E5);
+        avatar.setBackground(avBg);
+        LinearLayout.LayoutParams avLp=new LinearLayout.LayoutParams(dp(52),dp(52));
+        avLp.setMargins(0,0,dp(14),0); avatar.setLayoutParams(avLp);
+        avatar.addView(t("👤",22,false,Color.WHITE));
+        userRow.addView(avatar);
+
+        LinearLayout userInfo=new LinearLayout(this);
+        userInfo.setOrientation(LinearLayout.VERTICAL);
+        userInfo.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        userInfo.addView(t(loginUser!=null?loginUser:"kullanici",18,true,Color.WHITE));
+        // Admin badge
+        boolean isAdmin=loginUser!=null&&loginUser.equalsIgnoreCase("admin");
+        TextView roleBadge=t(isAdmin?"⚡ Admin":"👤 Kullanıcı",11,true,isAdmin?0xFF818CF8:0xFF58A6FF);
+        roleBadge.setPadding(dp(8),dp(3),dp(8),dp(3));
+        android.graphics.drawable.GradientDrawable rbBg=new android.graphics.drawable.GradientDrawable();
+        rbBg.setColor(isAdmin?0x1A818CF8:0x1A58A6FF); rbBg.setCornerRadius(dp(6));
+        rbBg.setStroke(dp(1),isAdmin?0x334F46E5:0x331F6FEB);
+        roleBadge.setBackground(rbBg);
+        LinearLayout.LayoutParams rbLp=new LinearLayout.LayoutParams(-2,-2);
+        rbLp.setMargins(0,dp(5),0,0); roleBadge.setLayoutParams(rbLp);
+        userInfo.addView(roleBadge);
+        userRow.addView(userInfo);
+        hero.addView(userRow);
+
+        // Abonelik barı — async doldurulur
+        LinearLayout subBar=new LinearLayout(this);
+        subBar.setOrientation(LinearLayout.HORIZONTAL);
+        subBar.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        subBar.setPadding(dp(12),dp(10),dp(12),dp(10));
+        android.graphics.drawable.GradientDrawable subBg=new android.graphics.drawable.GradientDrawable();
+        subBg.setColor(0xFF0D1117); subBg.setCornerRadius(dp(12)); subBg.setStroke(dp(1),0xFF2D3748);
+        subBar.setBackground(subBg);
+
+        TextView subIcon=t("🛡",18,false,Color.WHITE);
+        LinearLayout.LayoutParams siLp=new LinearLayout.LayoutParams(-2,-2);
+        siLp.setMargins(0,0,dp(10),0); subIcon.setLayoutParams(siLp);
+        subBar.addView(subIcon);
+
+        LinearLayout subInfo=new LinearLayout(this);
+        subInfo.setOrientation(LinearLayout.VERTICAL);
+        subInfo.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        subInfo.addView(t("Abonelik durumu",11,false,0xFF8892A4));
+        // Progress bar placeholder
+        android.widget.ProgressBar subProgress=new android.widget.ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);
+        subProgress.setMax(100); subProgress.setProgress(50);
+        subProgress.setIndeterminate(true);
+        LinearLayout.LayoutParams spLp=new LinearLayout.LayoutParams(-1,dp(5));
+        spLp.setMargins(0,dp(5),0,0); subProgress.setLayoutParams(spLp);
+        subInfo.addView(subProgress);
+        subBar.addView(subInfo);
+
+        final TextView subDays=t("...",12,true,0xFF3FB950);
+        LinearLayout.LayoutParams sdLp=new LinearLayout.LayoutParams(-2,-2);
+        sdLp.setMargins(dp(10),0,0,0); subDays.setLayoutParams(sdLp);
+        subBar.addView(subDays);
+        hero.addView(subBar);
+        root.addView(hero);
+
+        // Async abonelik sorgusu
         new Thread(()->{
             try{
                 java.net.URL url=new java.net.URL(apiBase+"/api/check-subscription?token="+apiToken);
@@ -3366,54 +3449,70 @@ void settingsScreen(){
                 con.disconnect();
                 org.json.JSONObject j=new org.json.JSONObject(resp);
                 int kalan=j.optInt("kalan_gun",9999);
-                String msg=kalan>=9999?"Abonelik: Sinirsiz":"Abonelik: "+kalan+" gun kaldi";
-                int color=kalan<=7?0xFFFF4444:kalan<=30?0xFFFFAA00:0xFF25D366;
-                runOnUiThread(()->c.addView(t(msg,12,false,color)));
-            }catch(Exception ignored){}
+                String daysTxt=kalan>=9999?"Sınırsız":kalan+" gün kaldı";
+                int dayColor=kalan<=7?0xFFEF4444:kalan<=30?0xFFEAB308:0xFF3FB950;
+                int progressVal=kalan>=9999?100:Math.min(100,(int)(kalan*100/365f));
+                runOnUiThread(()->{
+                    subDays.setText(daysTxt); subDays.setTextColor(dayColor);
+                    subProgress.setIndeterminate(false); subProgress.setProgress(progressVal);
+                    android.graphics.drawable.ClipDrawable clip=(android.graphics.drawable.ClipDrawable)subProgress.getProgressDrawable();
+                });
+            }catch(Exception ignored){
+                runOnUiThread(()->{ subDays.setText("—"); subProgress.setIndeterminate(false); });
+            }
         }).start();
 
-        TextView qrBtn=btn("Uygulamadan QR Bagla / Yenile",PURPLE);
-        qrBtn.setOnClickListener(v->showMobileQrDialog());
-        c.addView(qrBtn);
+        // ── BAĞLANTI GRUBU ─────────────────────────────────────────────────
+        root.addView(sectionLabel("Bağlantı"));
+        LinearLayout connGroup=settingsGroup();
 
-        TextView cloudSyncBtn=btn("Cloud Sync",GREEN);
-        cloudSyncBtn.setOnClickListener(v->cloudSyncNow());
-        c.addView(cloudSyncBtn);
+        connGroup.addView(settingsRow("📱","QR ile WhatsApp Bağla","Oturumu başlat veya yenile",0xFF4F46E5,
+            v->showMobileQrDialog(), false));
+        connGroup.addView(groupDivider());
+        connGroup.addView(settingsRow("🔄","Oturumu Sıfırla","WhatsApp bağlantısını temizle",0xFFEAB308,
+            v->resetMobileSession(), false));
+        connGroup.addView(groupDivider());
+        connGroup.addView(settingsRow("☁️","Cloud Sync","Favori listelerini sunucuyla senkronize et",0xFF3FB950,
+            v->cloudSyncNow(), false));
+        root.addView(connGroup);
 
-        TextView resetQrBtn=btn("WhatsApp Oturumunu Sifirla",YELLOW);
-        resetQrBtn.setOnClickListener(v->resetMobileSession());
-        c.addView(resetQrBtn);
+        // ── SİSTEM GRUBU ───────────────────────────────────────────────────
+        root.addView(sectionLabel("Sistem"));
+        LinearLayout sysGroup=settingsGroup();
+        sysGroup.addView(settingsRow("🔔","Bildirim İzinleri","Arka plan & bildirim erişimi",0xFF1F6FEB,
+            v->ensureRuntimePermissions(), false));
+        sysGroup.addView(groupDivider());
+        sysGroup.addView(settingsRow("🔋","Pil Optimizasyonu","Arka planda çalışmaya izin ver",0xFF0891B2,
+            v->openBackgroundPermissionSettings(), false));
+        root.addView(sysGroup);
 
-        TextView permBtn=btn("Bildirim / Arka Plan Izinlerini Ac",BLUE);
-        permBtn.setOnClickListener(v->ensureRuntimePermissions());
-        c.addView(permBtn);
-
-        TextView bgSettingsBtn=btn("Pil Optimizasyonu Ayarini Ac",BLUE);
-        bgSettingsBtn.setOnClickListener(v->openBackgroundPermissionSettings());
-        c.addView(bgSettingsBtn);
-
-        root.addView(c);
-
-        // ── Admin Paneli ──────────────────────────────────────────
-        if(loginUser!=null && loginUser.equalsIgnoreCase("admin")){
-            LinearLayout admin=card();
-            admin.addView(t("Admin Paneli",16,true,Color.WHITE));
-            admin.addView(t("API: "+apiBase,12,false,MUTED));
-            TextView userMgmtBtn=btn("Kullanici Yonetimi",BLUE);
-            userMgmtBtn.setOnClickListener(v->showUserManagementDialog());
-            admin.addView(userMgmtBtn);
-            TextView changePwBtn=btn("Sifre Degistir",PURPLE);
-            changePwBtn.setOnClickListener(v->showChangePasswordDialog(loginUser));
-            admin.addView(changePwBtn);
-            root.addView(admin);
+        // ── ADMİN GRUBU ────────────────────────────────────────────────────
+        if(isAdmin){
+            root.addView(sectionLabel("Admin"));
+            LinearLayout adminGroup=settingsGroup();
+            adminGroup.addView(settingsRow("👥","Kullanıcı Yönetimi","Ekle, sil, aktif/pasif yap",0xFF1F6FEB,
+                v->showUserManagementDialog(), false));
+            adminGroup.addView(groupDivider());
+            adminGroup.addView(settingsRow("🔑","Şifre Değiştir","Hesap parolasını güncelle",0xFF7C3AED,
+                v->showChangePasswordDialog(loginUser), false));
+            root.addView(adminGroup);
         }
 
-        LinearLayout logoutCard=card();
-        TextView logoutBtn=btn("Cikis Yap",RED);
+        // ── ÇIKIŞ ──────────────────────────────────────────────────────────
+        LinearLayout logoutBtn=new LinearLayout(this);
+        logoutBtn.setOrientation(LinearLayout.HORIZONTAL);
+        logoutBtn.setGravity(android.view.Gravity.CENTER);
+        logoutBtn.setPadding(dp(16),dp(15),dp(16),dp(15));
+        android.graphics.drawable.GradientDrawable loBg=new android.graphics.drawable.GradientDrawable();
+        loBg.setColor(0x14EF4444); loBg.setCornerRadius(dp(18)); loBg.setStroke(dp(1),0x40EF4444);
+        logoutBtn.setBackground(loBg);
+        LinearLayout.LayoutParams loLp=new LinearLayout.LayoutParams(-1,-2);
+        loLp.setMargins(0,dp(4),0,dp(8)); logoutBtn.setLayoutParams(loLp);
+        logoutBtn.addView(t("🚪  Çıkış Yap",15,true,0xFFEF4444));
         logoutBtn.setOnClickListener(v->logoutLogin());
-        logoutCard.addView(logoutBtn);
-        root.addView(logoutCard);
+        root.addView(logoutBtn);
     }
+
 
 
 
