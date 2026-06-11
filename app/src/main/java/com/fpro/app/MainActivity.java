@@ -79,7 +79,6 @@ public class MainActivity extends Activity {
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         loadSchedule();
-        resumeV2IfNeeded(); // V2 devam eden job varsa resume et
         perms(false);
         if(!isLoggedIn()){ loginScreen(); return; }
         wipeRuntimeForUserSwitch();
