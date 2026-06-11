@@ -3354,6 +3354,75 @@ void sendScreen(){
 
 
 
+    LinearLayout settingsGroup(){
+        LinearLayout g=new LinearLayout(this);
+        g.setOrientation(LinearLayout.VERTICAL);
+        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
+        bg.setColor(0xFF141921); bg.setCornerRadius(dp(18)); bg.setStroke(dp(1),0xFF2D3748);
+        g.setBackground(bg);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.setMargins(0,0,0,dp(4)); g.setLayoutParams(lp);
+        g.setClipToOutline(true);
+        return g;
+    }
+
+    LinearLayout settingsRow(String icon,String title,String sub,int iconColor,android.view.View.OnClickListener onClick,boolean danger){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        row.setPadding(dp(14),dp(14),dp(14),dp(14));
+        row.setOnClickListener(onClick);
+
+        // İkon kutusu
+        LinearLayout iconBox=new LinearLayout(this);
+        iconBox.setGravity(android.view.Gravity.CENTER);
+        int iconBg=(iconColor & 0x00FFFFFF)|0x22000000;
+        int iconBorder=(iconColor & 0x00FFFFFF)|0x44000000;
+        android.graphics.drawable.GradientDrawable ibBg=new android.graphics.drawable.GradientDrawable();
+        ibBg.setColor(iconBg); ibBg.setCornerRadius(dp(11)); ibBg.setStroke(dp(1),iconBorder);
+        iconBox.setBackground(ibBg);
+        LinearLayout.LayoutParams ibLp=new LinearLayout.LayoutParams(dp(38),dp(38));
+        ibLp.setMargins(0,0,dp(14),0); iconBox.setLayoutParams(ibLp);
+        iconBox.addView(t(icon,18,false,Color.WHITE));
+        row.addView(iconBox);
+
+        // Metin
+        LinearLayout textCol=new LinearLayout(this);
+        textCol.setOrientation(LinearLayout.VERTICAL);
+        textCol.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        int titleColor=danger?0xFFEF4444:0xFFE2E8F0;
+        textCol.addView(t(title,14,true,titleColor));
+        if(sub!=null&&!sub.isEmpty()){
+            TextView subTv=t(sub,11,false,0xFF5A6478);
+            LinearLayout.LayoutParams slp=new LinearLayout.LayoutParams(-1,-2);
+            slp.setMargins(0,dp(2),0,0); subTv.setLayoutParams(slp);
+            textCol.addView(subTv);
+        }
+        row.addView(textCol);
+
+        // Ok
+        TextView arrow=t("›",20,false,0xFF3A4455);
+        arrow.setPadding(dp(4),0,0,0);
+        row.addView(arrow);
+        return row;
+    }
+
+    android.view.View groupDivider(){
+        android.view.View d=new android.view.View(this);
+        d.setBackgroundColor(0xFF1E2533);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(1));
+        lp.setMargins(dp(66),0,0,0); d.setLayoutParams(lp);
+        return d;
+    }
+
+    TextView sectionLabel(String text){
+        TextView v=t(text.toUpperCase(),11,true,0xFF5A6478);
+        v.setLetterSpacing(0.08f);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.setMargins(dp(4),dp(6),0,dp(4)); v.setLayoutParams(lp);
+        return v;
+    }
+
 void settingsScreen(){
         base("Ayarlar",false);
 
