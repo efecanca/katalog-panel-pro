@@ -43,6 +43,8 @@ public class MainActivity extends Activity {
     // Albüm sistemi: her albüm = {photos: [], caption: ""}
     ArrayList<ArrayList<String>> albums=new ArrayList<>(); // foto listeleri
     ArrayList<String> albumCaptions=new ArrayList<>(); // her albümün mesajı
+    ArrayList<String> albumNames=new ArrayList<>(); // her albümün adı
+    boolean albumSendMode=true; // true=albüm modu, false=tek medya modu
     int pickingAlbumIdx=-1; // hangi albüm için galeri açıldı
 
     LinearLayout root;
@@ -137,7 +139,7 @@ public class MainActivity extends Activity {
         try{
             String albumData=sp.getString("albumData","");
             if(!albumData.isEmpty()){
-                albums.clear(); albumCaptions.clear();
+                albums.clear(); albumCaptions.clear(); albumNames.clear();
                 org.json.JSONArray arr=new org.json.JSONArray(albumData);
                 for(int i=0;i<arr.length();i++){
                     org.json.JSONObject a=arr.getJSONObject(i);
@@ -146,6 +148,7 @@ public class MainActivity extends Activity {
                     if(pArr!=null) for(int j=0;j<pArr.length();j++) photos.add(pArr.getString(j));
                     albums.add(photos);
                     albumCaptions.add(a.optString("caption",""));
+                    albumNames.add(a.optString("name",""));
                 }
             }
         }catch(Exception ignored){}
@@ -162,6 +165,7 @@ public class MainActivity extends Activity {
                 .putString("favLists",join(favLists,"|"))
                 .putString("activeList",activeList)
                 .putString("selectedFavLists",join(selectedFavLists,"|"))
+                .putBoolean("albumSendMode",albumSendMode)
                 .apply();
         // Albüm verilerini kaydet
         try{
@@ -170,6 +174,7 @@ public class MainActivity extends Activity {
                 org.json.JSONObject a=new org.json.JSONObject();
                 a.put("photos",new org.json.JSONArray(albums.get(i)));
                 a.put("caption",i<albumCaptions.size()?albumCaptions.get(i):"");
+                a.put("name",i<albumNames.size()?albumNames.get(i):"");
                 albumsJson.put(a);
             }
             appPrefs().edit().putString("albumData",albumsJson.toString()).apply();
@@ -458,6 +463,7 @@ boolean isLoggedIn(){
         apiToken=p.getString("apiToken","");
         // Manuel mod tercihini yükle
         manualMode=appPrefs().getBoolean("manualMode",false);
+        albumSendMode=appPrefs().getBoolean("albumSendMode",true);
         return apiToken!=null && apiToken.length()>5
             && loginUser!=null && loginUser.length()>0
             && apiBase!=null && apiBase.startsWith("http");
