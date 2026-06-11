@@ -2300,7 +2300,7 @@ void home(){
         } else {
             mbBg.setColor(0xFF13151A); mbBg.setCornerRadius(dp(16)); mbBg.setStroke(dp(1),0xFF2A2D36);
             modeBtn.setBackground(mbBg);
-            modeBtn.addView(t("✏️  Yönetime Dön",14,true,0xFF8892A4));
+            modeBtn.addView(t("✏️  Albümlere Dön",14,true,0xFF8892A4));
             modeBtn.setOnClickListener(v->{ albumSendMode=false; mediaScreen(); });
         }
         bottomBar.addView(modeBtn,new LinearLayout.LayoutParams(-1,-2));
