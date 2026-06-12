@@ -55,6 +55,16 @@ public class MainActivity extends Activity {
     LinkedHashSet<String> selectedFavLists=new LinkedHashSet<>();
     HashMap<String,String> favStatusCache=new HashMap<>();
     TextView connectionText, countText, sendButton, statusText, queueText, sentText, progressText, currentPersonText, etaText;
+
+    int[] sendRingProg=null;
+    android.view.View sendRingView=null;
+    android.widget.ImageView sendArrowImg=null;
+    TextView sendRingPctTv=null;
+    TextView sendRingLbl=null;
+    android.graphics.drawable.GradientDrawable sendRingInnerBg=null;
+    android.widget.FrameLayout sendStopFrame=null;
+    LinearLayout sendStRow=null;
+
     volatile boolean waConnected=false;
     volatile String waStatus="● Durum kontrol ediliyor";
     ProgressBar sendProgress;
