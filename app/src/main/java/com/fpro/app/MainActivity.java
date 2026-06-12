@@ -2731,7 +2731,7 @@ void sendScreen(){
         android.graphics.Canvas ac=new android.graphics.Canvas(arrowBmp);
         android.graphics.Paint ap=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
         ap.setColor(Color.WHITE); ap.setStyle(android.graphics.Paint.Style.STROKE);
-        ap.setStrokeWidth(dp(2.2f)); ap.setStrokeCap(android.graphics.Paint.Cap.ROUND);
+        ap.setStrokeWidth(dp(2)); ap.setStrokeCap(android.graphics.Paint.Cap.ROUND);
         ap.setStrokeJoin(android.graphics.Paint.Join.ROUND);
         ac.drawLine(dp(5),dp(14),dp(23),dp(14),ap);
         android.graphics.Path arPth=new android.graphics.Path();
@@ -2858,7 +2858,7 @@ void sendScreen(){
         android.graphics.Canvas cc=new android.graphics.Canvas(clkBmp);
         android.graphics.Paint cp=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
         cp.setColor(Color.WHITE); cp.setStyle(android.graphics.Paint.Style.STROKE);
-        cp.setStrokeWidth(dp(2.2f)); cp.setStrokeCap(android.graphics.Paint.Cap.ROUND);
+        cp.setStrokeWidth(dp(2)); cp.setStrokeCap(android.graphics.Paint.Cap.ROUND);
         cc.drawCircle(dp(14),dp(14),dp(11),cp);
         cc.drawLine(dp(14),dp(7),dp(14),dp(14),cp);
         cc.drawLine(dp(14),dp(14),dp(19),dp(18),cp);
