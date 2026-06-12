@@ -2590,6 +2590,8 @@ void sendScreen(){
         c.addView(choose);
         root.addView(c);
 
+        // Zamanlı gönderim kartı
+        addScheduleCard();
 
         LinearLayout counts=new LinearLayout(this);
         counts.setOrientation(LinearLayout.HORIZONTAL);
