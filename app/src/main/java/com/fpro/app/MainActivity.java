@@ -1924,8 +1924,9 @@ void home(){
     }
 
     void mediaScreen(){
+        albumSendMode=false; // Her girişte yönetim modunda başla
         base("Medya & Albumler",false);
-        root.setPadding(dp(14),dp(8),dp(14),dp(80)); // bottom padding for sticky bar
+        root.setPadding(dp(14),dp(8),dp(14),dp(90));
 
         int totalPhotos=0; for(ArrayList<String> al:albums) totalPhotos+=al.size();
 
@@ -1933,14 +1934,29 @@ void home(){
         LinearLayout titleBlock=new LinearLayout(this);
         titleBlock.setOrientation(LinearLayout.VERTICAL);
         titleBlock.setPadding(dp(2),dp(10),dp(2),dp(4));
-        if(!albumSendMode){
-            titleBlock.addView(t("Albümler",26,true,Color.WHITE));
-            titleBlock.addView(t(albums.size()+" albüm · "+totalPhotos+" fotoğraf",13,false,0xFF48505E));
-        } else {
-            titleBlock.addView(t("Gönderim",26,true,Color.WHITE));
-            titleBlock.addView(t("Albüm seç, liste seç, gönder",13,false,0xFF48505E));
-        }
+        titleBlock.addView(t("Albümler",26,true,Color.WHITE));
+        titleBlock.addView(t(albums.size()+" albüm · "+totalPhotos+" fotoğraf",13,false,0xFF48505E));
         root.addView(titleBlock);
+
+        // Albüm yoksa büyük boş state göster
+        if(albums.isEmpty()){
+            LinearLayout emptyHero=new LinearLayout(this);
+            emptyHero.setOrientation(LinearLayout.VERTICAL);
+            emptyHero.setGravity(android.view.Gravity.CENTER);
+            emptyHero.setPadding(dp(24),dp(48),dp(24),dp(48));
+            android.graphics.drawable.GradientDrawable ehBg=new android.graphics.drawable.GradientDrawable();
+            ehBg.setColor(0xFF13151A); ehBg.setCornerRadius(dp(20)); ehBg.setStroke(dp(1),0xFF1E2028);
+            emptyHero.setBackground(ehBg);
+            LinearLayout.LayoutParams ehLp=new LinearLayout.LayoutParams(-1,-2); ehLp.setMargins(0,dp(8),0,dp(8)); emptyHero.setLayoutParams(ehLp);
+            TextView ehIcon=t("🗂",42,false,Color.WHITE); ehIcon.setGravity(android.view.Gravity.CENTER); ehIcon.setAlpha(.25f);
+            emptyHero.addView(ehIcon);
+            TextView ehLbl=t("Henüz albüm yok",16,true,0xFF3D4455);
+            ehLbl.setGravity(android.view.Gravity.CENTER);
+            LinearLayout.LayoutParams ehLblLp=new LinearLayout.LayoutParams(-1,-2); ehLblLp.setMargins(0,dp(12),0,dp(6)); ehLbl.setLayoutParams(ehLblLp);
+            emptyHero.addView(ehLbl);
+            emptyHero.addView(t("Aşağıdaki butona dokun",13,false,0xFF2E3340));
+            root.addView(emptyHero);
+        }
 
         // ── ALBÜM KARTLARI ─────────────────────────────────────────────────
         int[] colors={0xFF5B5BD6,0xFF0891B2,0xFF059669,0xFFD97706,0xFF7C3AED,0xFFDC2626};
@@ -2016,8 +2032,8 @@ void home(){
             pillLp.setMargins(0,0,dp(8),0); fotoPill.setLayoutParams(pillLp);
             aHead.addView(fotoPill);
 
-            // Chevron
-            final TextView chevron=t("⌄",13,false,0xFF3D4455);
+            // Chevron — ilk albüm başta açık
+            final TextView chevron=t(idx==0?"⌃":"⌄",13,false,0xFF3D4455);
             chevron.setPadding(0,0,dp(8),0);
             aHead.addView(chevron);
 
@@ -2040,10 +2056,10 @@ void home(){
             });
             aHead.addView(delBtn);
 
-            // ── BODY (collapse) ──
+            // ── BODY (collapse) — ilk albüm açık, diğerleri kapalı ──
             final LinearLayout aBody=new LinearLayout(this);
             aBody.setOrientation(LinearLayout.VERTICAL);
-            aBody.setVisibility(android.view.View.GONE);
+            aBody.setVisibility(idx==0?android.view.View.VISIBLE:android.view.View.GONE);
 
             // Başlığa tıklayınca aç/kapat
             aHead.setOnClickListener(v->{
@@ -2059,7 +2075,7 @@ void home(){
             aCard.addView(div1,new LinearLayout.LayoutParams(-1,dp(1)));
 
             // ── YÖNETİM MODU BODY ──
-            if(!albumSendMode){
+            if(true){ // albumSendMode artık ayrı ekranda, burada her zaman yönetim
                 // Foto strip (3-col grid) veya empty state
                 if(photos.isEmpty()){
                     LinearLayout emptyState=new LinearLayout(this);
@@ -2171,91 +2187,14 @@ void home(){
                 });
                 capBox.addView(capInput); capWrap.addView(capBox); aBody.addView(capWrap);
 
-            } else {
-                // ── GÖNDERİM MODU BODY ──
-                // Mini foto şeridi (yatay, sil yok)
-                if(!photos.isEmpty()){
-                    android.widget.HorizontalScrollView hsv=new android.widget.HorizontalScrollView(this);
-                    hsv.setHorizontalScrollBarEnabled(false);
-                    hsv.setBackgroundColor(0xFF0D0E11);
-                    LinearLayout thumbRow=new LinearLayout(this); thumbRow.setOrientation(LinearLayout.HORIZONTAL);
-                    thumbRow.setPadding(dp(10),dp(8),dp(10),dp(8)); thumbRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                    for(String uri:photos){
-                        ImageView img=new ImageView(this); img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        android.graphics.drawable.GradientDrawable tBg=new android.graphics.drawable.GradientDrawable();
-                        tBg.setColor(0xFF1E2533); tBg.setCornerRadius(dp(8)); img.setBackground(tBg);
-                        img.setClipToOutline(true);
-                        try{ img.setImageURI(Uri.parse(uri)); }catch(Throwable ignored){}
-                        LinearLayout.LayoutParams tLp=new LinearLayout.LayoutParams(dp(52),dp(52)); tLp.setMargins(0,0,dp(4),0); img.setLayoutParams(tLp);
-                        thumbRow.addView(img);
-                    }
-                    hsv.addView(thumbRow); aBody.addView(hsv);
-                    android.view.View div3=new android.view.View(this); div3.setBackgroundColor(0xFF191C22);
-                    aBody.addView(div3,new LinearLayout.LayoutParams(-1,dp(1)));
-                }
-
-                // Liste seçici + Gönder butonu
-                LinearLayout sendRow=new LinearLayout(this);
-                sendRow.setOrientation(LinearLayout.HORIZONTAL);
-                sendRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                sendRow.setPadding(dp(14),dp(12),dp(14),dp(12));
-
-                // Liste seçici
-                LinearLayout listSel=new LinearLayout(this); listSel.setOrientation(LinearLayout.HORIZONTAL);
-                listSel.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                android.graphics.drawable.GradientDrawable lsBg=new android.graphics.drawable.GradientDrawable();
-                lsBg.setColor(0xFF0D0E11); lsBg.setCornerRadius(dp(10)); lsBg.setStroke(dp(1),0xFF1E2028); listSel.setBackground(lsBg);
-                listSel.setPadding(dp(10),dp(9),dp(10),dp(9));
-                listSel.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
-                TextView listIcon=t("👥",13,false,Color.WHITE); listIcon.setPadding(0,0,dp(6),0); listSel.addView(listIcon);
-                // Aktif favlist adı
-                String activeFavName=activeList.isEmpty()?(favLists.isEmpty()?"Liste seç":favLists.get(0)):activeList;
-                int favCount=0;
-                for(C c:contacts){ if(listsOfPhone(c.p).contains(activeFavName)) favCount++; }
-                final String favDisplay=favLists.isEmpty()?"Liste seç":activeFavName+" · "+favCount+" kişi";
-                TextView listVal=t(favDisplay,12,true,favLists.isEmpty()?0xFF3D4455:0xFF7C7FDB);
-                listVal.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1)); listSel.addView(listVal);
-                TextView listArrow=t("▾",12,false,0xFF3D4455); listArrow.setPadding(dp(4),0,0,0); listSel.addView(listArrow);
-
-                // Favlist seçim popup
-                listSel.setOnClickListener(v->{
-                    if(favLists.isEmpty()){ toast("Önce favori liste oluşturun"); return; }
-                    String[] items=favLists.toArray(new String[0]);
-                    new android.app.AlertDialog.Builder(this)
-                        .setTitle("Liste Seç")
-                        .setItems(items,(d,w)->{ activeList=favLists.get(w); save(); mediaScreen(); })
-                        .show();
-                });
-                sendRow.addView(listSel);
-
-                // Gönder butonu
-                boolean canSend=!photos.isEmpty()&&!favLists.isEmpty();
-                TextView sendBtn=new TextView(this);
-                sendBtn.setText(canSend?"🚀 Gönder":"🚀");
-                sendBtn.setTextSize(12); sendBtn.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-                sendBtn.setTextColor(canSend?Color.WHITE:0xFF2E3340);
-                sendBtn.setGravity(android.view.Gravity.CENTER);
-                android.graphics.drawable.GradientDrawable sbBg=new android.graphics.drawable.GradientDrawable();
-                sbBg.setColor(canSend?0xFF5B5BD6:0xFF13151A); sbBg.setCornerRadius(dp(10));
-                if(!canSend) sbBg.setStroke(dp(1),0xFF1E2028);
-                sendBtn.setBackground(sbBg); sendBtn.setPadding(dp(16),dp(9),dp(16),dp(9));
-                LinearLayout.LayoutParams sbLp=new LinearLayout.LayoutParams(-2,-2); sbLp.setMargins(dp(8),0,0,0); sendBtn.setLayoutParams(sbLp);
-                if(canSend){
-                    sendBtn.setOnClickListener(v->queueAlbum(aIdx));
-                }
-                sendRow.addView(sendBtn);
-                aBody.addView(sendRow);
-
-                // Eğer bu albüm kuyrukta/gönderimdeyse progress göster
-                checkAlbumQueueStatus(aIdx,aBody,color);
-            }
+            } // end yönetim modu body
 
             aCard.addView(aBody);
             root.addView(aCard);
         }
 
-        // ── YENİ ALBÜM (sadece yönetim modunda) ──
-        if(!albumSendMode){
+        // ── YENİ ALBÜM ──
+        if(true){
             LinearLayout addCard=new LinearLayout(this);
             addCard.setOrientation(LinearLayout.HORIZONTAL);
             addCard.setGravity(android.view.Gravity.CENTER);
@@ -2287,27 +2226,25 @@ void home(){
             new int[]{0x000A0B0D,0xFF0A0B0D,0xFF0A0B0D});
         bottomBar.setBackground(bbBg);
 
+        // Gönderime Geç butonu — sadece albüm varsa aktif
         LinearLayout modeBtn=new LinearLayout(this);
         modeBtn.setOrientation(LinearLayout.HORIZONTAL);
         modeBtn.setGravity(android.view.Gravity.CENTER);
         modeBtn.setPadding(dp(16),dp(15),dp(16),dp(15));
         android.graphics.drawable.GradientDrawable mbBg=new android.graphics.drawable.GradientDrawable();
-        if(!albumSendMode){
+        boolean hasAlbumWithPhotos=albums.stream().anyMatch(a->!a.isEmpty());
+        if(hasAlbumWithPhotos){
             mbBg.setColor(0xFF5B5BD6); mbBg.setCornerRadius(dp(16));
-            modeBtn.setBackground(mbBg);
-            modeBtn.addView(t("🚀  Gönderime Geç",14,true,Color.WHITE));
-            modeBtn.setOnClickListener(v->{ albumSendMode=true; mediaScreen(); });
         } else {
-            mbBg.setColor(0xFF13151A); mbBg.setCornerRadius(dp(16)); mbBg.setStroke(dp(1),0xFF2A2D36);
-            modeBtn.setBackground(mbBg);
-            modeBtn.addView(t("✏️  ",14,true,0xFF8892A4));
-            modeBtn.setOnClickListener(v->{ albumSendMode=false; mediaScreen(); });
+            mbBg.setColor(0xFF1A1C22); mbBg.setCornerRadius(dp(16)); mbBg.setStroke(dp(1),0xFF2A2D36);
         }
-        // Gönderim modunda geri dönüş butonu gösterme
-        if(!albumSendMode){
-            bottomBar.addView(modeBtn,new LinearLayout.LayoutParams(-1,-2));
-            root.addView(bottomBar);
+        modeBtn.setBackground(mbBg);
+        modeBtn.addView(t("🚀  Gönderime Geç",14,true,hasAlbumWithPhotos?Color.WHITE:0xFF3D4455));
+        if(hasAlbumWithPhotos){
+            modeBtn.setOnClickListener(v->sendScreen());
         }
+        bottomBar.addView(modeBtn,new LinearLayout.LayoutParams(-1,-2));
+        root.addView(bottomBar);
 
         // Legacy migration
         if(!media.isEmpty()&&albums.isEmpty()){
