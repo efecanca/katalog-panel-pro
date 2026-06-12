@@ -2303,8 +2303,11 @@ void home(){
             modeBtn.addView(t("✏️  ",14,true,0xFF8892A4));
             modeBtn.setOnClickListener(v->{ albumSendMode=false; mediaScreen(); });
         }
-        bottomBar.addView(modeBtn,new LinearLayout.LayoutParams(-1,-2));
-        root.addView(bottomBar);
+        // Gönderim modunda geri dönüş butonu gösterme
+        if(!albumSendMode){
+            bottomBar.addView(modeBtn,new LinearLayout.LayoutParams(-1,-2));
+            root.addView(bottomBar);
+        }
 
         // Legacy migration
         if(!media.isEmpty()&&albums.isEmpty()){
