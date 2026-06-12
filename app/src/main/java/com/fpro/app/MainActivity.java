@@ -2646,7 +2646,8 @@ void sendScreen(){
         nowPanel.setPadding(dp(14),dp(14),dp(14),dp(14));
 
         // Durum satırı
-        final LinearLayout stRow=new LinearLayout(this);
+        sendStRow=new LinearLayout(this);
+        final LinearLayout stRow=sendStRow;
         stRow.setOrientation(LinearLayout.HORIZONTAL);
         stRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
         stRow.setVisibility(sending?android.view.View.VISIBLE:android.view.View.GONE);
@@ -2691,10 +2692,11 @@ void sendScreen(){
         nowPanel.addView(etaText);
 
         // ── B: Ring progress + ayrı Dur butonu ──────────────────────────────
-        final int[] ringProg={sending?sendProgress.getProgress():0};
+        sendRingProg=new int[]{sending?sendProgress.getProgress():0};
+        final int[] ringProg=sendRingProg;
 
         // Ring view (Canvas)
-        final android.view.View ringView=new android.view.View(this){
+        sendRingView=new android.view.View(this){
             final android.graphics.Paint bgP=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
             final android.graphics.Paint fgP=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
             final android.graphics.RectF oval=new android.graphics.RectF();
@@ -2713,7 +2715,7 @@ void sendScreen(){
         final android.widget.FrameLayout ringFrame=new android.widget.FrameLayout(this);
         int ringSize=dp(88);
         ringFrame.setLayoutParams(new LinearLayout.LayoutParams(ringSize,ringSize));
-        ringFrame.addView(ringView,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        ringFrame.addView(sendRingView,new android.widget.FrameLayout.LayoutParams(-1,-1));
 
         // Ring iç dolgusu
         final LinearLayout ringInner=new LinearLayout(this);
@@ -2721,6 +2723,7 @@ void sendScreen(){
         ringInner.setGravity(android.view.Gravity.CENTER);
         android.graphics.drawable.GradientDrawable riBg=new android.graphics.drawable.GradientDrawable();
         riBg.setCornerRadius(dp(44));
+        sendRingInnerBg=riBg;
         riBg.setColor(sending?0xFF0D0E11:0xFF16A34A);
         ringInner.setBackground(riBg);
         android.widget.FrameLayout.LayoutParams riLp=new android.widget.FrameLayout.LayoutParams(dp(76),dp(76),android.view.Gravity.CENTER);
@@ -2737,14 +2740,17 @@ void sendScreen(){
         android.graphics.Path arPth=new android.graphics.Path();
         arPth.moveTo(dp(16),dp(7)); arPth.lineTo(dp(23),dp(14)); arPth.lineTo(dp(16),dp(21));
         ac.drawPath(arPth,ap);
-        final android.widget.ImageView arrowImg=new android.widget.ImageView(this);
+        sendArrowImg=new android.widget.ImageView(this);
+        final android.widget.ImageView arrowImg=sendArrowImg;
         arrowImg.setImageBitmap(arrowBmp);
         arrowImg.setVisibility(sending?android.view.View.GONE:android.view.View.VISIBLE);
 
-        final TextView ringPctTv=t(ringProg[0]+"%",20,true,Color.WHITE);
+        sendRingPctTv=t(ringProg[0]+"%",20,true,Color.WHITE);
+        final TextView ringPctTv=sendRingPctTv;
         ringPctTv.setVisibility(sending?android.view.View.VISIBLE:android.view.View.GONE);
 
-        final TextView ringLbl=t(sending?"İLERLİYOR":"GÖNDER",8,true,0xBBFFFFFF);
+        sendRingLbl=t(sending?"İLERLİYOR":"GÖNDER",8,true,0xBBFFFFFF);
+        final TextView ringLbl=sendRingLbl;
         ringLbl.setLetterSpacing(0.05f);
 
         ringInner.addView(arrowImg,new LinearLayout.LayoutParams(dp(28),dp(28)));
@@ -2756,7 +2762,8 @@ void sendScreen(){
         ringFrame.setOnClickListener(v->{ if(!sending) startSend(); });
 
         // ── DURDUR butonu (kırmızı küçük yuvarlak) ──────────────────────────
-        final android.widget.FrameLayout stopFrame=new android.widget.FrameLayout(this);
+        sendStopFrame=new android.widget.FrameLayout(this);
+        final android.widget.FrameLayout stopFrame=sendStopFrame;
         stopFrame.setLayoutParams(new LinearLayout.LayoutParams(dp(52),dp(52)));
         stopFrame.setVisibility(sending?android.view.View.VISIBLE:android.view.View.GONE);
         android.view.View stopBgV=new android.view.View(this);
@@ -2790,35 +2797,39 @@ void sendScreen(){
         sendButton=new TextView(this); sendButton.setVisibility(android.view.View.GONE); nowPanel.addView(sendButton);
 
         // updateProgressUI → ring + pbWrap senkronize eden listener
-        sendProgress.post(()->{
-            sendProgress.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener(){
-                int lastProg=-1;
-                @Override public void onGlobalLayout(){
-                    int p=sendProgress.getProgress();
-                    if(p!=lastProg){
-                        lastProg=p; ringProg[0]=p;
-                        ringPctTv.setText(p+"%");
-                        ringView.invalidate();
-                        if(p>0&&!sending){
-                            // tamamlandı
-                            arrowImg.setVisibility(android.view.View.VISIBLE);
-                            ringPctTv.setVisibility(android.view.View.GONE);
-                            ringLbl.setText("TAMAM"); riBg.setColor(0xFF16A34A);
-                            stopFrame.setVisibility(android.view.View.GONE);
-                        } else if(sending){
-                            stRow.setVisibility(android.view.View.VISIBLE);
-                            pbWrap.setVisibility(android.view.View.VISIBLE);
-                            currentPersonText.setVisibility(android.view.View.VISIBLE);
-                            etaText.setVisibility(android.view.View.VISIBLE);
-                            stopFrame.setVisibility(android.view.View.VISIBLE);
-                            arrowImg.setVisibility(android.view.View.GONE);
-                            ringPctTv.setVisibility(android.view.View.VISIBLE);
-                            ringLbl.setText("İLERLİYOR"); riBg.setColor(0xFF0D0E11);
-                        }
-                    }
+        // Ring → sendProgress polling (100ms)
+        final android.os.Handler ringHandler=new android.os.Handler(android.os.Looper.getMainLooper());
+        final Runnable ringPoller=new Runnable(){
+            int lastP=-1;
+            @Override public void run(){
+                if(sendProgress==null) return;
+                int p=sendProgress.getProgress();
+                if(p!=lastP){
+                    lastP=p; ringProg[0]=p;
+                    ringPctTv.setText(p+"%");
+                    ringView.invalidate();
                 }
-            });
-        });
+                // Gönderim bitti mi?
+                if(!sending && p>=100){
+                    // onSendComplete zaten çağrıldı — poller durabilir
+                    return;
+                }
+                // Gönderim başladı mı?
+                if(sending && p==0 && lastP==0){
+                    stRow.setVisibility(android.view.View.VISIBLE);
+                    pbWrap.setVisibility(android.view.View.VISIBLE);
+                    currentPersonText.setVisibility(android.view.View.VISIBLE);
+                    etaText.setVisibility(android.view.View.VISIBLE);
+                    stopFrame.setVisibility(android.view.View.VISIBLE);
+                    arrowImg.setVisibility(android.view.View.GONE);
+                    ringPctTv.setVisibility(android.view.View.VISIBLE);
+                    ringLbl.setText("İLERLİYOR");
+                    riBg.setColor(0xFF0D0E11);
+                }
+                ringHandler.postDelayed(this, 150);
+            }
+        };
+        ringHandler.post(ringPoller);
 
         modeCard.addView(nowPanel);
 
@@ -2830,18 +2841,30 @@ void sendScreen(){
         schedPanel.setVisibility(android.view.View.GONE);
 
         // Mevcut zamanlama durumu
-        if(scheduledSendAt>0){
-            java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("HH:mm",java.util.Locale.getDefault());
-            String schedStr=sdf.format(new java.util.Date(scheduledSendAt));
-            LinearLayout schedInfo=new LinearLayout(this); schedInfo.setOrientation(LinearLayout.HORIZONTAL);
-            schedInfo.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            android.graphics.drawable.GradientDrawable siBg=new android.graphics.drawable.GradientDrawable();
-            siBg.setColor(0x1A6366F1); siBg.setCornerRadius(dp(10)); siBg.setStroke(dp(1),0x336366F1);
-            schedInfo.setBackground(siBg); schedInfo.setPadding(dp(12),dp(10),dp(12),dp(10));
-            LinearLayout.LayoutParams siLp=new LinearLayout.LayoutParams(-1,-2); siLp.setMargins(0,0,0,dp(10)); schedInfo.setLayoutParams(siLp);
-            schedInfo.addView(t("⏰  "+schedStr+" için zamanlandı",13,true,0xFFa78bfa));
-            schedInfo.setLayoutParams(siLp);
-            schedPanel.addView(schedInfo);
+        {
+            LinearLayout schedInfoWrap=new LinearLayout(this);
+            schedInfoWrap.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams siwLp=new LinearLayout.LayoutParams(-1,-2);
+            siwLp.setMargins(0,0,0,dp(10)); schedInfoWrap.setLayoutParams(siwLp);
+            if(scheduledSendAt>0 && scheduledSendAt>System.currentTimeMillis()){
+                java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("HH:mm",java.util.Locale.getDefault());
+                String schedStr=sdf.format(new java.util.Date(scheduledSendAt));
+                long msLeft=scheduledSendAt-System.currentTimeMillis();
+                int minsLeft=(int)(msLeft/60000);
+                String countdown=minsLeft>60?(minsLeft/60)+"sa "+(minsLeft%60)+"dk":minsLeft+"dk sonra";
+                LinearLayout schedInfo=new LinearLayout(this);
+                schedInfo.setOrientation(LinearLayout.VERTICAL);
+                android.graphics.drawable.GradientDrawable siBg=new android.graphics.drawable.GradientDrawable();
+                siBg.setColor(0x1A6366F1); siBg.setCornerRadius(dp(10)); siBg.setStroke(dp(1),0x336366F1);
+                schedInfo.setBackground(siBg); schedInfo.setPadding(dp(12),dp(10),dp(12),dp(10));
+                schedInfo.addView(t("⏰  "+schedStr+" için zamanlandı",13,true,0xFFa78bfa));
+                schedInfo.addView(t(countdown,11,false,0xFF6366F1));
+                schedInfoWrap.addView(schedInfo);
+            } else if(scheduledSendAt>0){
+                // Geçmiş zamanlama — temizle
+                scheduledSendAt=0; saveSchedule();
+            }
+            schedPanel.addView(schedInfoWrap);
         }
 
         // Zamanla butonu → mevcut scheduleSendDialog() çağırır
@@ -2874,12 +2897,12 @@ void sendScreen(){
         schedBtn.setOnClickListener(v->scheduleSendDialog()); // ← mevcut metot
         schedPanel.addView(schedBtn);
 
-        // İptal linki (zamanlama varsa)
-        if(scheduledSendAt>0){
+        // İptal linki — scheduledSendAt varsa göster
+        if(scheduledSendAt>0 && scheduledSendAt>System.currentTimeMillis()){
             TextView cancelLnk=t("Zamanlamayı İptal Et",11,true,0xFFEF4444);
             cancelLnk.setGravity(android.view.Gravity.CENTER);
-            LinearLayout.LayoutParams clLp=new LinearLayout.LayoutParams(-1,-2); clLp.setMargins(0,dp(12),0,0); cancelLnk.setLayoutParams(clLp);
-            cancelLnk.setOnClickListener(v->cancelSchedule()); // ← mevcut metot
+            LinearLayout.LayoutParams clLp=new LinearLayout.LayoutParams(-1,-2); clLp.setMargins(0,dp(10),0,0); cancelLnk.setLayoutParams(clLp);
+            cancelLnk.setOnClickListener(v->cancelSchedule());
             schedPanel.addView(cancelLnk);
         }
 
@@ -2921,11 +2944,17 @@ void sendScreen(){
             statusText.setText("Kuyrukta "+queue.size()+" kisi var, devam ediliyor...");
             stRow.setVisibility(android.view.View.VISIBLE);
             pbWrap.setVisibility(android.view.View.VISIBLE);
+            currentPersonText.setVisibility(android.view.View.VISIBLE);
+            etaText.setVisibility(android.view.View.VISIBLE);
             stopFrame.setVisibility(android.view.View.VISIBLE);
             arrowImg.setVisibility(android.view.View.GONE);
             ringPctTv.setVisibility(android.view.View.VISIBLE);
             riBg.setColor(0xFF0D0E11); ringLbl.setText("İLERLİYOR");
             new android.os.Handler().postDelayed(()->startSend(),1500);
+        }
+        // Gönderim bittiyse de ring'i düzelt
+        if(!sending && sendProgress!=null && sendProgress.getProgress()>=100){
+            onSendComplete();
         }
     }
 
@@ -3186,10 +3215,26 @@ void sendScreen(){
                 sendButton.setText("GONDERIMi YENIDEN BASLAT");
                 sendButton.setBackground(grad(GREEN,darker(GREEN),14));
                 refreshQueue();
+                // UI state: tamamlandı
+                onSendComplete();
             });
         }).start();
     }
 
+
+        void onSendComplete(){
+        // Ring: 100% yeşil, ok ikon, stop gizle
+        if(sendRingProg!=null){ sendRingProg[0]=100; if(sendRingView!=null) sendRingView.invalidate(); }
+        if(sendArrowImg!=null) sendArrowImg.setVisibility(android.view.View.VISIBLE);
+        if(sendRingPctTv!=null) sendRingPctTv.setVisibility(android.view.View.GONE);
+        if(sendRingLbl!=null){ sendRingLbl.setText("TAMAM"); }
+        if(sendRingInnerBg!=null) sendRingInnerBg.setColor(0xFF16A34A);
+        if(sendStopFrame!=null) sendStopFrame.setVisibility(android.view.View.GONE);
+        if(sendStRow!=null){ sendStRow.setVisibility(android.view.View.VISIBLE); }
+        if(sendProgress!=null) sendProgress.setProgress(100);
+        if(progressText!=null) progressText.setText("100% gönderildi");
+        refreshQueue();
+    }
 
     void stopSend(){ stop=true; statusText.setText("Durduruluyor..."); }
 
@@ -3205,7 +3250,13 @@ void sendScreen(){
         int percent = total<=0 ? 0 : (int)Math.round((done*100.0)/total);
         if(sendProgress!=null) sendProgress.setProgress(percent);
         if(progressText!=null) progressText.setText(percent+"% gönderildi");
-        if(currentPersonText!=null) currentPersonText.setText("Şu an: "+(currentName==null||currentName.length()==0?"bekleniyor":currentName));
+        if(currentPersonText!=null){
+            if(currentName!=null && currentName.equals("tamamlandi")){
+                currentPersonText.setText("Durum: Tamamlandı ✅");
+            } else {
+                currentPersonText.setText("Şu an: "+(currentName==null||currentName.length()==0?"bekleniyor":currentName));
+            }
+        }
         if(etaText!=null){
             long elapsed = System.currentTimeMillis()-startMs;
             if(done>0 && total>done){
@@ -3233,7 +3284,10 @@ void sendScreen(){
     }
 
 
-    void refreshQueue(){ if(queueText!=null)queueText.setText("Kuyrukta:\n"+(queue.isEmpty()?"Yok":join(queue,"\n"))); if(sentText!=null)sentText.setText("Gönderilen:\n"+(sent.isEmpty()?"Henüz yok":join(sent,"\n"))); }
+    void refreshQueue(){
+        if(sentText!=null) sentText.setText(sent.isEmpty()?"Henüz gönderilmedi":sent.size()+" kişiye gönderildi");
+        if(queueText!=null) queueText.setText(queue.isEmpty()?"Kuyrukta kimse yok":queue.size()+" kişi bekliyor");
+    }
 
     // Tüm medyaları albüm olarak tek seferde gönder
     void uploadAlbum(String phone, ArrayList<String> uris, String caption) throws Exception {
