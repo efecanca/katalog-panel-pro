@@ -3136,6 +3136,24 @@ void sendScreen(){
         }
     }
 
+
+    LinearLayout buildCounterCell(String icon, String val, String lbl, int bgColor, int valColor){
+        LinearLayout cell=new LinearLayout(this);
+        cell.setOrientation(LinearLayout.VERTICAL);
+        cell.setGravity(android.view.Gravity.CENTER);
+        cell.setPadding(dp(8),dp(8),dp(8),dp(8));
+        TextView iconTv=t(icon,16,false,Color.WHITE);
+        iconTv.setGravity(android.view.Gravity.CENTER);
+        cell.addView(iconTv);
+        TextView valTv=t(val,18,true,valColor);
+        valTv.setGravity(android.view.Gravity.CENTER);
+        cell.addView(valTv);
+        TextView lblTv=t(lbl,9,false,0xFF5A6478);
+        lblTv.setGravity(android.view.Gravity.CENTER);
+        cell.addView(lblTv);
+        return cell;
+    }
+
     LinearLayout buildRowCard(){
         LinearLayout c=new LinearLayout(this); c.setOrientation(LinearLayout.VERTICAL);
         android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
