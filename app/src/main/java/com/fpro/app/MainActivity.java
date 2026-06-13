@@ -2838,6 +2838,7 @@ void sendScreen(){
         sendRingLbl=t(sending?"İLERLİYOR":"GÖNDER",8,true,0xBBFFFFFF);
         final TextView ringLbl=sendRingLbl;
         ringLbl.setGravity(android.view.Gravity.CENTER);
+        ringLbl.setGravity(android.view.Gravity.CENTER);
         ringLbl.setLetterSpacing(0.05f);
 
         ringInner.addView(arrowImg,new LinearLayout.LayoutParams(dp(28),dp(28)));
@@ -2944,7 +2945,7 @@ void sendScreen(){
                     stopFrame.setVisibility(android.view.View.VISIBLE);
                     arrowImg.setVisibility(android.view.View.GONE);
                     ringPctTv.setVisibility(android.view.View.VISIBLE);
-                    ringLbl.setText(sending?"İLERLİYOR":"TAMAMLANDI");
+                    ringLbl.setGravity(android.view.Gravity.CENTER); ringLbl.setText((sendProgress!=null && sendProgress.getProgress()>=100)?"TAMAMLANDI":(sending?"İLERLİYOR":"GÖNDER"));
                     riBg.setColor(0xFF0D0E11);
                 }
                 ringHandler.postDelayed(this, 150);
@@ -3128,7 +3129,7 @@ void sendScreen(){
             stopFrame.setVisibility(android.view.View.VISIBLE);
             arrowImg.setVisibility(android.view.View.GONE);
             ringPctTv.setVisibility(android.view.View.VISIBLE);
-            riBg.setColor(0xFF0D0E11); ringLbl.setText(sending?"İLERLİYOR":"TAMAMLANDI");
+            riBg.setColor(0xFF0D0E11); ringLbl.setGravity(android.view.Gravity.CENTER); ringLbl.setText((sendProgress!=null && sendProgress.getProgress()>=100)?"TAMAMLANDI":(sending?"İLERLİYOR":"GÖNDER"));
             new android.os.Handler().postDelayed(()->startSend(),1500);
         }
         // Gönderim bittiyse de ring'i düzelt
@@ -3427,7 +3428,7 @@ void sendScreen(){
         if(sendRingProg!=null){ sendRingProg[0]=100; if(sendRingView!=null) sendRingView.invalidate(); }
         if(sendArrowImg!=null) sendArrowImg.setVisibility(android.view.View.VISIBLE);
         if(sendRingPctTv!=null) sendRingPctTv.setVisibility(android.view.View.GONE);
-        if(sendRingLbl!=null){ sendRingLbl.setText("TAMAMLANDI"); sendRingLbl.setGravity(android.view.Gravity.CENTER); }
+        if(sendRingLbl!=null){ sendRingLbl.setGravity(android.view.Gravity.CENTER); sendRingLbl.setText("TAMAMLANDI"); sendRingLbl.setGravity(android.view.Gravity.CENTER); }
         if(sendRingInnerBg!=null) sendRingInnerBg.setColor(0xFF16A34A);
         if(sendStopFrame!=null) sendStopFrame.setVisibility(android.view.View.GONE);
         if(sendStRow!=null){ sendStRow.setVisibility(android.view.View.VISIBLE); }
@@ -3490,8 +3491,14 @@ void sendScreen(){
 
 
     void refreshQueue(){
-        if(sentText!=null) sentText.setText(sent.isEmpty()?"Henüz gönderilmedi":sent.size()+" kişi");
-        if(queueText!=null) queueText.setText(queue.isEmpty()?"Boş":queue.size()+" kişi bekliyor");
+        int total=getSelectedSendPhones().size();
+        int prog=sendProgress!=null?sendProgress.getProgress():0;
+        int sentCount=sent.size();
+        if(prog>=100 && total>0) sentCount=total;
+        int q=Math.max(0,total-sentCount);
+
+        if(sentText!=null) sentText.setText(sentCount<=0?"Henüz gönderilmedi":sentCount+" kişi");
+        if(queueText!=null) queueText.setText(q<=0?"Boş":q+" kişi bekliyor");
     }
 
     // Tüm medyaları albüm olarak tek seferde gönder
