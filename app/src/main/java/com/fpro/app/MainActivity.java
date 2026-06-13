@@ -3173,16 +3173,31 @@ void sendScreen(){
     }
 
     LinearLayout buildQueueRow(int dotColor,String label,String val,boolean isSent){
-        LinearLayout r=new LinearLayout(this); r.setOrientation(LinearLayout.HORIZONTAL); r.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        LinearLayout r=new LinearLayout(this);
+        r.setOrientation(LinearLayout.HORIZONTAL);
+        r.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
         android.view.View d=new android.view.View(this);
         android.graphics.drawable.GradientDrawable dd=new android.graphics.drawable.GradientDrawable();
-        dd.setColor(dotColor); dd.setCornerRadius(dp(3)); d.setBackground(dd);
-        LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(6),dp(6)); dlp.setMargins(0,0,dp(8),0); d.setLayoutParams(dlp); r.addView(d);
-        TextView lbl=t(label,12,false,0xFF8892A4); lbl.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1)); r.addView(lbl);
-        TextView valTv=t(val,12,true,0xFFC8CCD6);
-        valTv.setGravity(android.view.Gravity.RIGHT|android.view.Gravity.CENTER_VERTICAL);
-        if(isSent) sentText=valTv; else queueText=valTv;
-        r.addView(valTv);
+        dd.setColor(dotColor);
+        dd.setCornerRadius(dp(3));
+        d.setBackground(dd);
+        LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(6),dp(6));
+        dlp.setMargins(0,0,dp(8),0);
+        r.addView(d,dlp);
+
+        TextView lbl=t(label,12,false,0xFF8892A4);
+        lbl.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        r.addView(lbl);
+
+        TextView valueText=t(val,12,true,0xFFC8CCD6);
+        valueText.setGravity(android.view.Gravity.RIGHT|android.view.Gravity.CENTER_VERTICAL);
+        valueText.setLayoutParams(new LinearLayout.LayoutParams(-2,-2));
+
+        if(isSent) this.sentText=valueText;
+        else this.queueText=valueText;
+
+        r.addView(valueText);
         return r;
     }
 
