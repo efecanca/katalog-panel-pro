@@ -3494,12 +3494,18 @@ void sendScreen(){
     void refreshQueue(){
         int total=getSelectedSendPhones().size();
         int prog=sendProgress!=null?sendProgress.getProgress():0;
+
         int sentCount=sent.size();
         if(prog>=100 && total>0) sentCount=total;
-        int q=Math.max(0,total-sentCount);
 
-        if(sentText!=null) sentText.setText(sentCount<=0?"Henüz gönderilmedi":sentCount+" kişi");
-        if(queueText!=null) queueText.setText(q<=0?"Boş":q+" kişi bekliyor");
+        int qCount=Math.max(0,total-sentCount);
+
+        if(sentText!=null){
+            sentText.setText(sentCount<=0?"Henüz gönderilmedi":sentCount+" kişi");
+        }
+        if(queueText!=null){
+            queueText.setText(qCount<=0?"Boş":qCount+" kişi bekliyor");
+        }
     }
 
     // Tüm medyaları albüm olarak tek seferde gönder
