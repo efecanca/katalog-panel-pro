@@ -2744,7 +2744,8 @@ void sendScreen(){
         LinearLayout.LayoutParams sdLp=new LinearLayout.LayoutParams(dp(7),dp(7));
         sdLp.setMargins(0,0,dp(7),0); stDot.setLayoutParams(sdLp);
         stRow.addView(stDot);
-        stRow.addView(t("Gönderiliyor",11,true,0xFF3FB950));
+        TextView sendStatusLabel=t(sending?"Gönderiliyor":"Tamamlandı",11,true,0xFF3FB950);
+        stRow.addView(sendStatusLabel);
         nowPanel.addView(stRow);
 
         // Mini progress bar
@@ -2908,7 +2909,7 @@ void sendScreen(){
                     stopFrame.setVisibility(android.view.View.VISIBLE);
                     arrowImg.setVisibility(android.view.View.GONE);
                     ringPctTv.setVisibility(android.view.View.VISIBLE);
-                    ringLbl.setText("İLERLİYOR");
+                    ringLbl.setText(sending?"İLERLİYOR":"TAMAMLANDI");
                     riBg.setColor(0xFF0D0E11);
                 }
                 ringHandler.postDelayed(this, 150);
@@ -3034,7 +3035,7 @@ void sendScreen(){
             stopFrame.setVisibility(android.view.View.VISIBLE);
             arrowImg.setVisibility(android.view.View.GONE);
             ringPctTv.setVisibility(android.view.View.VISIBLE);
-            riBg.setColor(0xFF0D0E11); ringLbl.setText("İLERLİYOR");
+            riBg.setColor(0xFF0D0E11); ringLbl.setText(sending?"İLERLİYOR":"TAMAMLANDI");
             new android.os.Handler().postDelayed(()->startSend(),1500);
         }
         // Gönderim bittiyse de ring'i düzelt
@@ -3312,12 +3313,14 @@ void sendScreen(){
         if(sendRingProg!=null){ sendRingProg[0]=100; if(sendRingView!=null) sendRingView.invalidate(); }
         if(sendArrowImg!=null) sendArrowImg.setVisibility(android.view.View.VISIBLE);
         if(sendRingPctTv!=null) sendRingPctTv.setVisibility(android.view.View.GONE);
-        if(sendRingLbl!=null){ sendRingLbl.setText("TAMAM"); }
+        if(sendRingLbl!=null){ sendRingLbl.setText("TAMAMLANDI"); }
         if(sendRingInnerBg!=null) sendRingInnerBg.setColor(0xFF16A34A);
         if(sendStopFrame!=null) sendStopFrame.setVisibility(android.view.View.GONE);
         if(sendStRow!=null){ sendStRow.setVisibility(android.view.View.VISIBLE); }
         if(sendProgress!=null) sendProgress.setProgress(100);
         if(progressText!=null) progressText.setText("100% gönderildi");
+        if(currentPersonText!=null) currentPersonText.setText("Durum: Tamamlandı ✅");
+        if(etaText!=null) etaText.setText("Tamamlandı ✅");
         refreshQueue();
     }
 
@@ -3339,7 +3342,10 @@ void sendScreen(){
             if(currentName!=null && currentName.equals("tamamlandi")){
                 currentPersonText.setText("Durum: Tamamlandı ✅");
             } else {
-                currentPersonText.setText("Şu an: "+(currentName==null||currentName.length()==0?"bekleniyor":currentName));
+                if(currentName!=null && currentName.equals("tamamlandi"))
+            currentPersonText.setText("Durum: Tamamlandı ✅");
+        else
+            currentPersonText.setText("Şu an: "+(currentName==null||currentName.length()==0?"bekleniyor":currentName));
             }
         }
         if(etaText!=null){
@@ -3370,8 +3376,8 @@ void sendScreen(){
 
 
     void refreshQueue(){
-        if(sentText!=null) sentText.setText(sent.isEmpty()?"Henüz gönderilmedi":sent.size()+" kişiye gönderildi");
-        if(queueText!=null) queueText.setText(queue.isEmpty()?"Kuyrukta kimse yok":queue.size()+" kişi bekliyor");
+        if(sentText!=null) sentText.setText(sent.isEmpty()?"Henüz gönderilmedi":sent.size()+" kişi");
+        if(queueText!=null) queueText.setText(queue.isEmpty()?"Boş":queue.size()+" kişi bekliyor");
     }
 
     // Tüm medyaları albüm olarak tek seferde gönder
