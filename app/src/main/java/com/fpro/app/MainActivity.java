@@ -2817,7 +2817,7 @@ void sendScreen(){
                 if(p!=lastP){
                     lastP=p; ringProg[0]=p;
                     ringPctTv.setText(p+"%");
-                    ringView.invalidate();
+                    sendRingView.invalidate();
                 }
                 // Gönderim bitti mi?
                 if(!sending && p>=100){
