@@ -2837,6 +2837,7 @@ void sendScreen(){
 
         sendRingLbl=t(sending?"İLERLİYOR":"GÖNDER",8,true,0xBBFFFFFF);
         final TextView ringLbl=sendRingLbl;
+        ringLbl.setGravity(android.view.Gravity.CENTER);
         ringLbl.setLetterSpacing(0.05f);
 
         ringInner.addView(arrowImg,new LinearLayout.LayoutParams(dp(28),dp(28)));
@@ -3176,8 +3177,11 @@ void sendScreen(){
         dd.setColor(dotColor); dd.setCornerRadius(dp(3)); d.setBackground(dd);
         LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(6),dp(6)); dlp.setMargins(0,0,dp(8),0); d.setLayoutParams(dlp); r.addView(d);
         TextView lbl=t(label,12,false,0xFF8892A4); lbl.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1)); r.addView(lbl);
-        if(isSent) sentText=t(val,12,true,0xFFC8CCD6); else queueText=t(val,12,true,0xFFC8CCD6);
-        r.addView(isSent?sentText:queueText); return r;
+        TextView valTv=t(val,12,true,0xFFC8CCD6);
+        valTv.setGravity(android.view.Gravity.RIGHT|android.view.Gravity.CENTER_VERTICAL);
+        if(isSent) sentText=valTv; else queueText=valTv;
+        r.addView(valTv);
+        return r;
     }
 
     void chooseListDialog(){
@@ -3423,7 +3427,7 @@ void sendScreen(){
         if(sendRingProg!=null){ sendRingProg[0]=100; if(sendRingView!=null) sendRingView.invalidate(); }
         if(sendArrowImg!=null) sendArrowImg.setVisibility(android.view.View.VISIBLE);
         if(sendRingPctTv!=null) sendRingPctTv.setVisibility(android.view.View.GONE);
-        if(sendRingLbl!=null){ sendRingLbl.setText("TAMAMLANDI"); }
+        if(sendRingLbl!=null){ sendRingLbl.setText("TAMAMLANDI"); sendRingLbl.setGravity(android.view.Gravity.CENTER); }
         if(sendRingInnerBg!=null) sendRingInnerBg.setColor(0xFF16A34A);
         if(sendStopFrame!=null) sendStopFrame.setVisibility(android.view.View.GONE);
         if(sendStRow!=null){ sendStRow.setVisibility(android.view.View.VISIBLE); }
