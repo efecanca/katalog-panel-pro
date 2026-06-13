@@ -2833,6 +2833,7 @@ void sendScreen(){
 
         sendRingPctTv=t(ringProg[0]+"%",20,true,Color.WHITE);
         final TextView ringPctTv=sendRingPctTv;
+        ringPctTv.setGravity(android.view.Gravity.CENTER);
         ringPctTv.setVisibility(sending?android.view.View.VISIBLE:android.view.View.GONE);
 
         sendRingLbl=t(sending?"İLERLİYOR":"GÖNDER",8,true,0xBBFFFFFF);
@@ -2842,8 +2843,8 @@ void sendScreen(){
         ringLbl.setLetterSpacing(0.05f);
 
         ringInner.addView(arrowImg,new LinearLayout.LayoutParams(dp(28),dp(28)));
-        ringInner.addView(ringPctTv);
-        ringInner.addView(ringLbl);
+        ringInner.addView(ringPctTv,new LinearLayout.LayoutParams(-1,-2));
+        ringInner.addView(ringLbl,new LinearLayout.LayoutParams(-1,-2));
         ringFrame.addView(ringInner);
 
         // Ring tıklama → startSend()
