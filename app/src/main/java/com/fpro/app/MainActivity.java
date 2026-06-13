@@ -2903,7 +2903,6 @@ void sendScreen(){
         // Bilgi satırı: "{kişi} kişi • {albüm} albüm • {foto} foto"
         int totalFoto=0; for(ArrayList<String> al:albums) totalFoto+=al.size();
         LinkedHashSet<String> lp2=getSelectedSendPhones();
-        String infoStr=lp2.size()+" kişi  •  "+albums.size()+" albüm  •  totalFoto+" foto";
         infoStr=lp2.size()+" kişi  •  "+albums.size()+" albüm  •  "+totalFoto+" foto";
         TextView infoTv=t(infoStr,12,false,0xFF4A5568);
         infoTv.setGravity(android.view.Gravity.CENTER);
