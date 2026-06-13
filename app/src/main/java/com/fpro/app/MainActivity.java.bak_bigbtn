@@ -2728,7 +2728,7 @@ void sendScreen(){
         final LinearLayout nowPanel=new LinearLayout(this);
         nowPanel.setOrientation(LinearLayout.VERTICAL);
         nowPanel.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-        nowPanel.setPadding(dp(14),dp(20),dp(14),dp(20));
+        nowPanel.setPadding(dp(14),dp(14),dp(14),dp(14));
 
         // Durum satırı
         sendStRow=new LinearLayout(this);
@@ -2786,8 +2786,8 @@ void sendScreen(){
             final android.graphics.Paint bgP=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
             final android.graphics.Paint fgP=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
             final android.graphics.RectF oval=new android.graphics.RectF();
-            { bgP.setStyle(android.graphics.Paint.Style.STROKE); bgP.setStrokeWidth(dp(8)); bgP.setColor(0xFF1A2A1A);
-              fgP.setStyle(android.graphics.Paint.Style.STROKE); fgP.setStrokeWidth(dp(8));
+            { bgP.setStyle(android.graphics.Paint.Style.STROKE); bgP.setStrokeWidth(dp(5)); bgP.setColor(0xFF1E2028);
+              fgP.setStyle(android.graphics.Paint.Style.STROKE); fgP.setStrokeWidth(dp(5));
               fgP.setStrokeCap(android.graphics.Paint.Cap.ROUND); fgP.setColor(0xFF22C55E); }
             @Override protected void onDraw(android.graphics.Canvas c){
                 float cx=getWidth()/2f,cy=getHeight()/2f,r=cx-dp(5);
@@ -2797,22 +2797,22 @@ void sendScreen(){
             }
         };
 
-        // Ring FrameLayout — 160dp büyük, glow için elevation
+        // Ring FrameLayout
         final android.widget.FrameLayout ringFrame=new android.widget.FrameLayout(this);
-        int ringSize=dp(160);
+        int ringSize=dp(88);
         ringFrame.setLayoutParams(new LinearLayout.LayoutParams(ringSize,ringSize));
         ringFrame.addView(sendRingView,new android.widget.FrameLayout.LayoutParams(-1,-1));
 
-        // Ring iç dolgusu — 148dp (6dp border boşluğu)
+        // Ring iç dolgusu
         final LinearLayout ringInner=new LinearLayout(this);
         ringInner.setOrientation(LinearLayout.VERTICAL);
         ringInner.setGravity(android.view.Gravity.CENTER);
         android.graphics.drawable.GradientDrawable riBg=new android.graphics.drawable.GradientDrawable();
-        riBg.setCornerRadius(dp(80));
+        riBg.setCornerRadius(dp(44));
         sendRingInnerBg=riBg;
-        riBg.setColor(sending?0xFF0A1A0A:0xFF16A34A);
+        riBg.setColor(sending?0xFF0D0E11:0xFF16A34A);
         ringInner.setBackground(riBg);
-        android.widget.FrameLayout.LayoutParams riLp=new android.widget.FrameLayout.LayoutParams(dp(148),dp(148),android.view.Gravity.CENTER);
+        android.widget.FrameLayout.LayoutParams riLp=new android.widget.FrameLayout.LayoutParams(dp(76),dp(76),android.view.Gravity.CENTER);
         ringInner.setLayoutParams(riLp);
 
         // Ok ikon bitmap
@@ -2869,48 +2869,13 @@ void sendScreen(){
         stopFrame.addView(durLbl);
         stopFrame.setOnClickListener(v->stopSend());
 
-        // Glow efekti — ring etrafına yeşil parlama
-        if(!sending){
-            ringFrame.setElevation(dp(12));
-            android.os.Handler glowH=new android.os.Handler(android.os.Looper.getMainLooper());
-            glowH.post(new Runnable(){
-                float scale=1f; boolean growing=true;
-                @Override public void run(){
-                    if(sending){ ringFrame.setScaleX(1f); ringFrame.setScaleY(1f); return; }
-                    if(growing){ scale+=0.003f; if(scale>=1.04f) growing=false; }
-                    else        { scale-=0.003f; if(scale<=1.00f) growing=true; }
-                    ringFrame.setScaleX(scale); ringFrame.setScaleY(scale);
-                    glowH.postDelayed(this,16);
-                }
-            });
-        }
-
-        // Merkezi dikey wrap: ring üstte, durdur altında, bilgi daha altında
+        // B wrap: ring + stop yan yana
         LinearLayout bWrap=new LinearLayout(this);
-        bWrap.setOrientation(LinearLayout.VERTICAL);
-        bWrap.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-        LinearLayout.LayoutParams bwLp=new LinearLayout.LayoutParams(-1,-2);
-        bwLp.setMargins(0,dp(8),0,dp(8)); bWrap.setLayoutParams(bwLp);
+        bWrap.setOrientation(LinearLayout.HORIZONTAL);
+        bWrap.setGravity(android.view.Gravity.CENTER_VERTICAL);
         bWrap.addView(ringFrame);
-
-        // Durdur — ring altında ortalı (sadece gönderim sırasında)
-        LinearLayout.LayoutParams sfLp=new LinearLayout.LayoutParams(-2,-2);
-        sfLp.setMargins(0,dp(14),0,0);
-        sfLp.gravity=android.view.Gravity.CENTER_HORIZONTAL;
-        stopFrame.setLayoutParams(sfLp);
+        LinearLayout.LayoutParams sfLp=new LinearLayout.LayoutParams(-2,-2); sfLp.setMargins(dp(16),0,0,0); stopFrame.setLayoutParams(sfLp);
         bWrap.addView(stopFrame);
-
-        // Bilgi satırı: "{kişi} kişi • {albüm} albüm • {foto} foto"
-        int totalFoto=0; for(ArrayList<String> al:albums) totalFoto+=al.size();
-        LinkedHashSet<String> lp2=getSelectedSendPhones();
-        String infoStr=lp2.size()+" kişi  •  "+albums.size()+" albüm  •  totalFoto+" foto";
-        infoStr=lp2.size()+" kişi  •  "+albums.size()+" albüm  •  "+totalFoto+" foto";
-        TextView infoTv=t(infoStr,12,false,0xFF4A5568);
-        infoTv.setGravity(android.view.Gravity.CENTER);
-        LinearLayout.LayoutParams itLp=new LinearLayout.LayoutParams(-1,-2);
-        itLp.setMargins(0,dp(10),0,0); infoTv.setLayoutParams(itLp);
-        bWrap.addView(infoTv);
-
         nowPanel.addView(bWrap);
 
         // sendButton gizli (startSend/stopSend senkronizasyonu için)
@@ -3043,64 +3008,6 @@ void sendScreen(){
             schedPanel.setVisibility(android.view.View.VISIBLE);
             nowPanel.setVisibility(android.view.View.GONE);
         });
-
-        // ── HAZIR KARTI (gönderim başlamamışsa) ─────────────────────────────
-        if(!sending){
-            int totalF2=0; for(ArrayList<String> al:albums) totalF2+=al.size();
-            LinkedHashSet<String> lp3=getSelectedSendPhones();
-
-            LinearLayout readyCard=buildRowCard();
-            readyCard.setPadding(dp(16),dp(16),dp(16),dp(16));
-            LinearLayout.LayoutParams rcLp=new LinearLayout.LayoutParams(-1,-2);
-            rcLp.setMargins(0,0,0,dp(4)); readyCard.setLayoutParams(rcLp);
-
-            // Başlık satırı
-            LinearLayout rcHead=new LinearLayout(this);
-            rcHead.setOrientation(LinearLayout.HORIZONTAL);
-            rcHead.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            LinearLayout.LayoutParams rchLp=new LinearLayout.LayoutParams(-1,-2);
-            rchLp.setMargins(0,0,0,dp(14)); rcHead.setLayoutParams(rchLp);
-            TextView rcIcon=t("✅",18,false,Color.WHITE);
-            LinearLayout.LayoutParams rciLp=new LinearLayout.LayoutParams(-2,-2);
-            rciLp.setMargins(0,0,dp(10),0); rcIcon.setLayoutParams(rciLp);
-            rcHead.addView(rcIcon);
-            LinearLayout rcTitles=new LinearLayout(this); rcTitles.setOrientation(LinearLayout.VERTICAL);
-            rcTitles.addView(t("Hazır",15,true,Color.WHITE));
-            rcTitles.addView(t("Gönderim için her şey hazır",11,false,0xFF48505E));
-            rcHead.addView(rcTitles);
-            readyCard.addView(rcHead);
-
-            // 3 sayaç yan yana
-            LinearLayout countersRow=new LinearLayout(this);
-            countersRow.setOrientation(LinearLayout.HORIZONTAL);
-            countersRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-
-            // Kişi
-            LinearLayout c1=buildCounterCell("👥",String.valueOf(lp3.size()),"Kişi",0xFF1E2D45,0xFF58A6FF);
-            c1.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
-            countersRow.addView(c1);
-
-            // Dikey ayraç
-            android.view.View va1=new android.view.View(this); va1.setBackgroundColor(0xFF1E2028);
-            countersRow.addView(va1,new LinearLayout.LayoutParams(dp(1),dp(36)));
-
-            // Albüm
-            LinearLayout c2=buildCounterCell("🗂",String.valueOf(albums.size()),"Albüm",0xFF1E2533,0xFFa78bfa);
-            c2.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
-            countersRow.addView(c2);
-
-            // Dikey ayraç
-            android.view.View va2=new android.view.View(this); va2.setBackgroundColor(0xFF1E2028);
-            countersRow.addView(va2,new LinearLayout.LayoutParams(dp(1),dp(36)));
-
-            // Foto
-            LinearLayout c3=buildCounterCell("🖼",String.valueOf(totalF2),"Fotoğraf",0xFF1A2E1A,0xFF3FB950);
-            c3.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
-            countersRow.addView(c3);
-
-            readyCard.addView(countersRow);
-            root.addView(readyCard);
-        }
 
         // ── KUYRUK KARTI ─────────────────────────────────────────────────────
         LinearLayout qCard=buildRowCard();
