@@ -2535,10 +2535,7 @@ void sendScreen(){
         titleBlock.setOrientation(LinearLayout.VERTICAL);
         titleBlock.setPadding(dp(2),dp(10),dp(2),dp(6));
         titleBlock.addView(t("Gönderim",26,true,Color.WHITE));
-        String titleSub=albums.isEmpty()
-            ?"Gönderim için albüm oluşturun"
-            :listPhones.size()+" kişi · "+albums.size()+" albüm";
-        titleBlock.addView(t(titleSub,13,false,0xFF48505E));
+        titleBlock.addView(t(listPhones.size()+" kişi · "+albums.size()+" albüm",13,false,0xFF48505E));
         root.addView(titleBlock);
 
         // ── LİSTE SEÇİCİ ────────────────────────────────────────────────────
@@ -2615,78 +2612,6 @@ void sendScreen(){
         hiddenRoot.addView(delayMaxBox); hiddenRoot.addView(mediaDelayBox);
         hiddenRoot.addView(personDelayBox);
         root.addView(hiddenRoot);
-
-        // ── ALBÜM BOŞ STATE ─────────────────────────────────────────────────────
-        if(albums.isEmpty()){
-            LinearLayout emptyCard=buildRowCard();
-            LinearLayout.LayoutParams ecLp=new LinearLayout.LayoutParams(-1,-2);
-            ecLp.setMargins(0,dp(4),0,0); emptyCard.setLayoutParams(ecLp);
-            emptyCard.setPadding(dp(24),dp(32),dp(24),dp(32));
-            emptyCard.setGravity(android.view.Gravity.CENTER);
-
-            // İkon
-            TextView emptyIcon=t("🗂",38,false,Color.WHITE);
-            emptyIcon.setGravity(android.view.Gravity.CENTER);
-            emptyIcon.setAlpha(0.25f);
-            LinearLayout.LayoutParams eiLp=new LinearLayout.LayoutParams(-1,-2);
-            eiLp.setMargins(0,0,0,dp(14)); emptyIcon.setLayoutParams(eiLp);
-            emptyCard.addView(emptyIcon);
-
-            // Başlık
-            TextView emptyTitle=t("Gönderilecek albüm yok",16,true,0xFFE2E8F0);
-            emptyTitle.setGravity(android.view.Gravity.CENTER);
-            LinearLayout.LayoutParams etLp=new LinearLayout.LayoutParams(-1,-2);
-            etLp.setMargins(0,0,0,dp(8)); emptyTitle.setLayoutParams(etLp);
-            emptyCard.addView(emptyTitle);
-
-            // Alt yazı
-            TextView emptySub=t("Medya sekmesinden albüm oluşturup\nfotoğraf ekle",13,false,0xFF48505E);
-            emptySub.setGravity(android.view.Gravity.CENTER);
-            emptySub.setLineSpacing(dp(3),1f);
-            LinearLayout.LayoutParams esLp=new LinearLayout.LayoutParams(-1,-2);
-            esLp.setMargins(0,0,0,dp(24)); emptySub.setLayoutParams(esLp);
-            emptyCard.addView(emptySub);
-
-            // Albüm Oluştur butonu
-            LinearLayout emptyBtn=new LinearLayout(this);
-            emptyBtn.setOrientation(LinearLayout.HORIZONTAL);
-            emptyBtn.setGravity(android.view.Gravity.CENTER);
-            emptyBtn.setPadding(dp(20),dp(13),dp(20),dp(13));
-            android.graphics.drawable.GradientDrawable ebBg=new android.graphics.drawable.GradientDrawable();
-            ebBg.setColor(0xFF5B5BD6); ebBg.setCornerRadius(dp(14));
-            emptyBtn.setBackground(ebBg);
-            emptyBtn.addView(t("Albüm Oluştur",14,true,Color.WHITE));
-            emptyBtn.setOnClickListener(v->mediaScreen());
-            LinearLayout.LayoutParams ebLp=new LinearLayout.LayoutParams(-2,-2);
-            emptyBtn.setLayoutParams(ebLp);
-            emptyCard.addView(emptyBtn);
-
-            root.addView(emptyCard);
-            // hiddenRoot (msgBox vb.) zaten eklendi — kuyruk kartını da göster
-            // Kuyruk
-            LinearLayout qCardE=buildRowCard();
-            qCardE.setPadding(dp(13),dp(11),dp(13),dp(11));
-            String sentInitE=sent.isEmpty()?"Henüz gönderilmedi":sent.size()+" kişiye gönderildi";
-            String queueInitE=queue.isEmpty()?"Kuyrukta kimse yok":queue.size()+" kişi bekliyor";
-            qCardE.addView(buildQueueRow(0xFF3FB950,"Gönderilen",sentInitE,true));
-            android.view.View qdivE=new android.view.View(this); qdivE.setBackgroundColor(0xFF191C22);
-            LinearLayout.LayoutParams qdlpE=new LinearLayout.LayoutParams(-1,dp(1)); qdlpE.setMargins(0,dp(6),0,dp(6)); qdivE.setLayoutParams(qdlpE);
-            qCardE.addView(qdivE);
-            qCardE.addView(buildQueueRow(0xFF58A6FF,"Kuyruk",queueInitE,false));
-            sentText=t(sentInitE,12,true,0xFFC8CCD6); sentText.setVisibility(android.view.View.GONE); qCardE.addView(sentText);
-            queueText=t(queueInitE,12,true,0xFFC8CCD6); queueText.setVisibility(android.view.View.GONE); qCardE.addView(queueText);
-            LinearLayout.LayoutParams qceLp=new LinearLayout.LayoutParams(-1,-2); qceLp.setMargins(0,dp(6),0,0); qCardE.setLayoutParams(qceLp);
-            root.addView(qCardE);
-            // hidden field'lar için dummy atamalar (NPE önleme)
-            statusText=t("",0,false,Color.TRANSPARENT); statusText.setVisibility(android.view.View.GONE); root.addView(statusText);
-            sendButton=new TextView(this); sendButton.setVisibility(android.view.View.GONE); root.addView(sendButton);
-            sendProgress=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);
-            sendProgress.setVisibility(android.view.View.GONE); root.addView(sendProgress);
-            progressText=t("",0,false,Color.TRANSPARENT); progressText.setVisibility(android.view.View.GONE); root.addView(progressText);
-            currentPersonText=t("",0,false,Color.TRANSPARENT); currentPersonText.setVisibility(android.view.View.GONE); root.addView(currentPersonText);
-            etaText=t("",0,false,Color.TRANSPARENT); etaText.setVisibility(android.view.View.GONE); root.addView(etaText);
-            return; // Burada bitir — modeCard, segment, ring gösterilmesin
-        }
 
         // ── GÖNDERİM MODU KARTI ─────────────────────────────────────────────
         LinearLayout modeCard=buildRowCard();
