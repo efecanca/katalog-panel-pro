@@ -3445,6 +3445,8 @@ void sendScreen(){
         if(sendArrowImg!=null) sendArrowImg.setVisibility(android.view.View.VISIBLE);
         if(sendRingPctTv!=null) sendRingPctTv.setVisibility(android.view.View.GONE);
         if(sendRingLbl!=null){ sendRingLbl.setGravity(android.view.Gravity.CENTER); sendRingLbl.setText("TAMAMLANDI"); sendRingLbl.setGravity(android.view.Gravity.CENTER); }
+        if(sentText!=null) sentText.setText(getSelectedSendPhones().size()+" kişi");
+        if(queueText!=null) queueText.setText("Boş");
         if(sendRingInnerBg!=null) sendRingInnerBg.setColor(0xFF16A34A);
         if(sendStopFrame!=null) sendStopFrame.setVisibility(android.view.View.GONE);
         if(sendStRow!=null){ sendStRow.setVisibility(android.view.View.VISIBLE); }
