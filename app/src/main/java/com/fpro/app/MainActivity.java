@@ -3172,36 +3172,36 @@ void sendScreen(){
         ic.addView(t(emoji,15,false,Color.WHITE)); return ic;
     }
 
-    
-LinearLayout buildQueueRow(int dotColor,String label,String val,boolean isSent){
+    LinearLayout buildQueueRow(int dotColor,String label,String val,boolean isSent){
         LinearLayout r=new LinearLayout(this);
         r.setOrientation(LinearLayout.HORIZONTAL);
         r.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
-        android.view.View dot=new android.view.View(this);
-        android.graphics.drawable.GradientDrawable dg=new android.graphics.drawable.GradientDrawable();
-        dg.setColor(dotColor);
-        dg.setCornerRadius(dp(4));
-        dot.setBackground(dg);
-        LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(7),dp(7));
-        dlp.setMargins(0,0,dp(10),0);
-        r.addView(dot,dlp);
+        android.view.View d=new android.view.View(this);
+        android.graphics.drawable.GradientDrawable dd=new android.graphics.drawable.GradientDrawable();
+        dd.setColor(dotColor);
+        dd.setCornerRadius(dp(3));
+        d.setBackground(dd);
+        LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(6),dp(6));
+        dlp.setMargins(0,0,dp(8),0);
+        r.addView(d,dlp);
 
         TextView lbl=t(label,12,false,0xFF8892A4);
         lbl.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
         r.addView(lbl);
 
-        TextView value=t(val,12,true,0xFFC8CCD6);
-        value.setGravity(android.view.Gravity.RIGHT|android.view.Gravity.CENTER_VERTICAL);
+        TextView valueText=t(val,12,true,0xFFC8CCD6);
+        valueText.setGravity(android.view.Gravity.RIGHT|android.view.Gravity.CENTER_VERTICAL);
+        valueText.setLayoutParams(new LinearLayout.LayoutParams(-2,-2));
 
-        if(isSent) sentText=value;
-        else queueText=value;
+        if(isSent) this.sentText=valueText;
+        else this.queueText=valueText;
 
-        r.addView(value,new LinearLayout.LayoutParams(-2,-2));
+        r.addView(valueText);
         return r;
     }
 
-void chooseListDialog(){
+    void chooseListDialog(){
         final String[] arr=favLists.toArray(new String[0]);
         final boolean[] checked=new boolean[arr.length];
 
@@ -3508,21 +3508,16 @@ void chooseListDialog(){
 
     void refreshQueue(){
         int total=getSelectedSendPhones().size();
-        int progress=sendProgress!=null?sendProgress.getProgress():0;
+        int prog=sendProgress!=null?sendProgress.getProgress():0;
 
         int sentCount=sent.size();
-        if(progress>=100 && total>0) sentCount=total;
+        if(prog>=100 && total>0) sentCount=total;
 
-        int queueCount=Math.max(0,total-sentCount);
+        int qCount=Math.max(0,total-sentCount);
 
         if(sentText!=null){
             sentText.setText(sentCount<=0?"Henüz gönderilmedi":sentCount+" kişi");
         }
-
-        if(queueText!=null){
-            queueText.setText(queueCount<=0?"Boş":queueCount+" kişi bekliyor");
-        }
-    }
         if(queueText!=null){
             queueText.setText(qCount<=0?"Boş":qCount+" kişi bekliyor");
         }
