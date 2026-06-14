@@ -3108,7 +3108,7 @@ void sendScreen(){
         LinearLayout qCard=buildRowCard();
         qCard.setPadding(dp(13),dp(11),dp(13),dp(11));
         String sentInit=sent.isEmpty()?"Henüz gönderilmedi":sent.size()+" kişiye gönderildi";
-        String queueInit=queue.isEmpty()?"Kuyrukta kimse yok":queue.size()+" kişi bekliyor";
+        String queueInit=(sendProgress!=null && sendProgress.getProgress()>=100)?"Boş":(queue.isEmpty()?"Boş":queue.size()+" kişi bekliyor");
         qCard.addView(buildQueueRow(0xFF3FB950,"Gönderilen",sentInit,true));
         android.view.View qdiv=new android.view.View(this); qdiv.setBackgroundColor(0xFF191C22);
         LinearLayout.LayoutParams qdlp=new LinearLayout.LayoutParams(-1,dp(1)); qdlp.setMargins(0,dp(6),0,dp(6)); qdiv.setLayoutParams(qdlp);
