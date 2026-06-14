@@ -3509,23 +3509,33 @@ void sendScreen(){
 
 
     void refreshQueue(){
-        int total=getSelectedSendPhones().size();
-        int prog=sendProgress!=null?sendProgress.getProgress():0;
+    int total=getSelectedSendPhones().size();
+    int sentCount=sent.size();
+    int qCount=Math.max(0,total-sentCount);
 
-        int sentCount=sent.size();
-        if(prog>=100 && total>0) sentCount=total;
+    if(sentText!=null) sentText.setText(sentCount<=0?"Henüz gönderilmedi":sentCount+" kişiye gönderildi");
+    if(queueText!=null) queueText.setText(qCount<=0?"Boş":qCount+" kişi bekliyor");
 
-        int qCount=Math.max(0,total-sentCount);
+    new Thread(()->{
+        try{
+            String url=apiBase+"/api/queue-status?token="+apiToken;
+            JSONObject o=new JSONObject(httpGet(url));
+            int cur=o.optInt("current",0);
+            int tot=o.optInt("total",0);
+            boolean running=o.optBoolean("running",false);
 
-        if(sentText!=null){
-            sentText.setText(sentCount<=0?"Henüz gönderilmedi":sentCount+" kişi");
-        }
-        if(queueText!=null){
-            queueText.setText(qCount<=0?"Boş":qCount+" kişi bekliyor");
-        }
-    }
+            if(tot>0 || running){
+                int waiting=Math.max(0,tot-cur);
+                runOnUiThread(()->{
+                    if(sentText!=null) sentText.setText(cur<=0?"Henüz gönderilmedi":cur+" kişiye gönderildi");
+                    if(queueText!=null) queueText.setText(waiting<=0?"Boş":waiting+" kişi bekliyor");
+                });
+            }
+        }catch(Exception ignored){}
+    }).start();
+}
 
-    // Tüm medyaları albüm olarak tek seferde gönder
+// Tüm medyaları albüm olarak tek seferde gönder
     void uploadAlbum(String phone, ArrayList<String> uris, String caption) throws Exception {
         if(uris.isEmpty()) return;
 
