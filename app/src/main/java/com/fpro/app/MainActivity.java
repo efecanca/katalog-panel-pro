@@ -1987,7 +1987,7 @@ void home(){
             aCard.setOrientation(LinearLayout.VERTICAL);
             aCard.setClipToOutline(true);
             android.graphics.drawable.GradientDrawable cardBg=new android.graphics.drawable.GradientDrawable();
-            cardBg.setColor(0xFF13151A); cardBg.setCornerRadius(dp(20)); cardBg.setStroke(dp(1),0xFF1E2028);
+            cardBg.setColor(0xFF1A1F27); cardBg.setCornerRadius(dp(20)); cardBg.setStroke(dp(1),0xFF1E2028);
             aCard.setBackground(cardBg);
             LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
             cardLp.setMargins(0,dp(4),0,dp(4)); aCard.setLayoutParams(cardLp);
@@ -2026,7 +2026,7 @@ void home(){
             TextView nameTv=t(albumName,15,true,0xFFF1F1F1);
             midCol.addView(nameTv);
             String subTxt=photos.isEmpty()?"Fotoğraf yok":photos.size()+" fotoğraf";
-            TextView subTv=t(subTxt,11,false,0xFF3D4455);
+            TextView subTv=t(subTxt,11,false,0xFFAAB2BF);
             LinearLayout.LayoutParams stLp=new LinearLayout.LayoutParams(-1,-2);
             stLp.setMargins(0,dp(2),0,0); subTv.setLayoutParams(stLp);
             midCol.addView(subTv);
@@ -2092,11 +2092,11 @@ void home(){
                     emptyState.setOrientation(LinearLayout.VERTICAL);
                     emptyState.setGravity(android.view.Gravity.CENTER);
                     emptyState.setPadding(dp(16),dp(22),dp(16),dp(22));
-                    emptyState.setBackgroundColor(0xFF0D0E11);
+                    emptyState.setBackgroundColor(0xFF1C2330);
                     emptyState.setOnClickListener(v->{ pickingAlbumIdx=aIdx; galleryPickerForAlbum(); });
                     TextView ei=t("🖼",26,false,Color.WHITE); ei.setGravity(android.view.Gravity.CENTER); ei.setAlpha(.2f);
                     emptyState.addView(ei);
-                    TextView el=t("Fotoğraf eklemek için dokun",12,true,0xFF2E3340);
+                    TextView el=t("Fotoğraf eklemek için dokun",12,true,0xFFD6DCE5);
                     el.setGravity(android.view.Gravity.CENTER);
                     LinearLayout.LayoutParams elLp=new LinearLayout.LayoutParams(-1,-2); elLp.setMargins(0,dp(6),0,0); el.setLayoutParams(elLp);
                     emptyState.addView(el);
@@ -2153,7 +2153,7 @@ void home(){
                 // Albüm adı input
                 LinearLayout nameWrap=new LinearLayout(this); nameWrap.setOrientation(LinearLayout.VERTICAL);
                 nameWrap.setPadding(dp(14),dp(10),dp(14),dp(4));
-                TextView nameLbl=t("ALBÜM ADI",10,true,0xFF3D4455); nameLbl.setLetterSpacing(0.06f);
+                TextView nameLbl=t("ALBÜM ADI",10,true,0xFFB8C0CC); nameLbl.setLetterSpacing(0.06f);
                 LinearLayout.LayoutParams nlLp=new LinearLayout.LayoutParams(-1,-2); nlLp.setMargins(0,0,0,dp(6)); nameLbl.setLayoutParams(nlLp);
                 nameWrap.addView(nameLbl);
                 final EditText nameInput=new EditText(this);
@@ -2162,7 +2162,7 @@ void home(){
                 nameInput.setTextColor(Color.WHITE); nameInput.setHintTextColor(0xFF2E3340);
                 nameInput.setTextSize(13); nameInput.setSingleLine(true);
                 android.graphics.drawable.GradientDrawable niBg=new android.graphics.drawable.GradientDrawable();
-                niBg.setColor(0xFF0D0E11); niBg.setCornerRadius(dp(10)); niBg.setStroke(dp(1),0xFF1E2028); nameInput.setBackground(niBg);
+                niBg.setColor(0xFF1C2330); niBg.setCornerRadius(dp(10)); niBg.setStroke(dp(1),0xFF1E2028); nameInput.setBackground(niBg);
                 nameInput.setPadding(dp(12),dp(10),dp(12),dp(10));
                 nameInput.setOnFocusChangeListener((v,f)->{
                     if(!f){
@@ -2179,7 +2179,7 @@ void home(){
                 LinearLayout capLblRow=new LinearLayout(this); capLblRow.setOrientation(LinearLayout.HORIZONTAL); capLblRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
                 capLblRow.setPadding(0,0,0,dp(6));
                 capLblRow.addView(t("✉",12,false,color));
-                TextView capLbl=t("  MESAJ",10,true,0xFF3D4455); capLbl.setLetterSpacing(0.06f);
+                TextView capLbl=t("  MESAJ",10,true,0xFFB8C0CC); capLbl.setLetterSpacing(0.06f);
                 capLbl.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1)); capLblRow.addView(capLbl);
                 TextView tagBadge=t("{isim}",9,true,color); tagBadge.setPadding(dp(6),dp(2),dp(6),dp(2));
                 android.graphics.drawable.GradientDrawable tagBg=new android.graphics.drawable.GradientDrawable();
