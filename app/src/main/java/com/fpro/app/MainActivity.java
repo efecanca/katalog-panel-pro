@@ -689,7 +689,7 @@ void loginScreen(){
             try{
                 JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
                 int latestCode=r.optInt("versionCode",0);
-                int currentCode=96;
+                int currentCode=94;
                 boolean force=r.optBoolean("forceUpdate",false);
                 String latestName=r.optString("versionName","");
                 String changelog=r.optString("changelog","");
