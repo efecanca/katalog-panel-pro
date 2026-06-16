@@ -689,7 +689,7 @@ void loginScreen(){
             try{
                 JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
                 int latestCode=r.optInt("versionCode",0);
-                int currentCode=97;
+                int currentCode=98;
                 boolean force=r.optBoolean("forceUpdate",false);
                 String latestName=r.optString("versionName","");
                 String changelog=r.optString("changelog","");
@@ -1510,6 +1510,7 @@ void home(){
             try{
                 JSONObject j=new JSONObject(httpGet(apiBase+"/mobile/status?token="+apiToken));
                 boolean ok=j.optBoolean("connected",false);
+                        waUptimeText=j.optString("uptimeText","");
                 runOnUiThread(()->{
                     waConnected=ok;
                     waStatus=ok?"● Bağlantı aktif":"● WhatsApp bağlantısı yok";
@@ -4702,7 +4703,7 @@ class DashboardCanvas extends View {
             text(c,"WhatsApp Bağlantı",290,255,32,Color.WHITE,true);
             text(c,waConnected?"● Bağlantı aktif":"● Bağlantı yok",290,315,28,statusColor,false);
             text(c,apiToken!=null && apiToken.length()>5 ? "API: "+apiBase.replace("http://","").replace("https://","") : "API: gizli",290,370,20,muted(),false);
-            text(c,waConnected?"Bağlantı durumu: aktif":"Oturum kapalı",290,412,21,statusColor,false);
+            text(c,waConnected?("Oturum süresi: "+(waUptimeText==null||waUptimeText.length()==0?"aktif":waUptimeText)):"Oturum kapalı",290,412,21,statusColor,false);
 
             // QR card
             round(c,760,228,922,382,22,Color.rgb(7,20,28),stroke());
