@@ -1510,7 +1510,7 @@ void home(){
             try{
                 JSONObject j=new JSONObject(httpGet(apiBase+"/mobile/status?token="+apiToken));
                 boolean ok=j.optBoolean("connected",false);
-                        MainActivity.this.waUptimeText=j.optString("uptimeText","");
+                        MainActivity.this.MainActivity.this.waUptimeText=j.optString("uptimeText","");
                 runOnUiThread(()->{
                     waConnected=ok;
                     waStatus=ok?"● Bağlantı aktif":"● WhatsApp bağlantısı yok";
