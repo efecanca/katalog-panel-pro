@@ -1513,7 +1513,7 @@ void home(){
                         waStatus = ok ? ("Oturum süresi: "+j.optString("uptimeText","aktif")) : "WhatsApp bağlantısı yok";
                 runOnUiThread(()->{
                     waConnected=ok;
-                    waStatus=ok?"● Bağlantı aktif":"● WhatsApp bağlantısı yok";
+                    if(!ok) waStatus="● WhatsApp bağlantısı yok";
                     if(connectionText!=null) connectionText.setText(waStatus);
                     invalidateDashboard();
                 });
@@ -1526,6 +1526,12 @@ void home(){
                 });
             }
         }).start();
+
+// Oturum süresini 30 saniyede bir yenile
+new Handler(Looper.getMainLooper()).postDelayed(() -> {
+    try { checkStatus(); } catch(Exception ignored) {}
+}, 30000);
+
     }
 
     void contactsScreen(){
