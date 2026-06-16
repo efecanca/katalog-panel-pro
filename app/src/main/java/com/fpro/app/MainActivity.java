@@ -4703,7 +4703,7 @@ class DashboardCanvas extends View {
             text(c,"WhatsApp Bağlantı",290,255,32,Color.WHITE,true);
             text(c,waConnected?"● Bağlantı aktif":"● Bağlantı yok",290,315,28,statusColor,false);
             text(c,apiToken!=null && apiToken.length()>5 ? "API: "+apiBase.replace("http://","").replace("https://","") : "API: gizli",290,370,20,muted(),false);
-            text(c,waConnected?("Oturum süresi: "+(MainActivity.this.waUptimeText==null||MainActivity.this.waUptimeText.length()==0?"aktif":MainActivity.this.waUptimeText)):"Oturum kapalı",290,412,21,statusColor,false);
+            text(c,waConnected?("Oturum süresi: "+(MainActivity.this.MainActivity.this.waUptimeText==null||MainActivity.this.MainActivity.this.waUptimeText.length()==0?"aktif":MainActivity.this.waUptimeText)):"Oturum kapalı",290,412,21,statusColor,false);
 
             // QR card
             round(c,760,228,922,382,22,Color.rgb(7,20,28),stroke());
