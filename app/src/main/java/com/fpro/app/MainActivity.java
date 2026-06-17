@@ -819,6 +819,7 @@ void loginScreen(){
             if(waConnected && waConnectedAt>0){
                 waStatus="Oturum süresi: "+formatUptime(waConnectedAt);
                 if(connectionText!=null) connectionText.setText(waStatus);
+                invalidateDashboard();
             }
             h.postDelayed(tick[0],30000);
         };
