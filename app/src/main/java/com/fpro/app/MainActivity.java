@@ -2380,7 +2380,7 @@ void home(){
         GridLayout.LayoutParams gp=new GridLayout.LayoutParams(); gp.width=(getResources().getDisplayMetrics().widthPixels-dp(44))/2; gp.setMargins(dp(4),dp(4),dp(4),dp(4)); grid.addView(cell,gp);
     }
     void galleryPicker(){ perms(false); Intent i=new Intent(android.provider.MediaStore.ACTION_PICK_IMAGES); i.putExtra(android.provider.MediaStore.EXTRA_PICK_IMAGES_MAX, 100); startActivityForResult(i,REQ_MEDIA); }
-    void galleryPickerForAlbum(){ perms(false); Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("*/*"); i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"image/*","application/pdf"}); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Album "+(pickingAlbumIdx+1)+" icin gorsel/PDF sec"),REQ_ALBUM_BASE+pickingAlbumIdx); }
+    void galleryPickerForAlbum(){ perms(false); Intent i=new Intent(android.provider.MediaStore.ACTION_PICK_IMAGES); i.putExtra(android.provider.MediaStore.EXTRA_PICK_IMAGES_MAX, 100); startActivityForResult(i,REQ_ALBUM_BASE+pickingAlbumIdx); }
     void filePicker(){ Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("*/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"image/*","video/*","application/pdf"}); startActivityForResult(Intent.createChooser(i,"PDF / Dosya seç"),REQ_MEDIA); }
     @Override protected void onActivityResult(int req,int res,Intent data){
         super.onActivityResult(req,res,data);
