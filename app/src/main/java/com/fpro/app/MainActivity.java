@@ -5022,7 +5022,7 @@ class DashboardCanvas extends View {
             if(tab!=null && tab.equals("Ana Sayfa")){
                 runOnUiThread(()->{
                     if(connectionText!=null){
-                        connectionText.setText(waConnected?"Baglanti aktif":"WhatsApp baglantisi yok");
+                        connectionText.setText(waConnected?waStatus:"WhatsApp baglantisi yok");
                         connectionText.setTextColor(waConnected
                             ?android.graphics.Color.rgb(33,211,102)
                             :android.graphics.Color.rgb(239,68,68));
