@@ -1721,7 +1721,7 @@ void home(){
         TextView ist=smallBtn("İSTATİSTİK",PURPLE); ist.setOnClickListener(v->statsScreen()); tabs.addView(ist,new LinearLayout.LayoutParams(0,-2,1));
         top.addView(tabs);
         TextView addContact=btn("+ YENİ KİŞİ EKLE",BLUE); addContact.setOnClickListener(v->manualAddContactDialog()); top.addView(addContact);
-        TextView saveList=btn("Listeyi Kaydet",GREEN); saveList.setOnClickListener(v->{saveListPhones(activeList,editingPhones); selected.clear(); selected.addAll(editingPhones); save(); toast("Liste kaydedildi"); favListsScreen();}); top.addView(saveList);
+        TextView saveList=btn("Listeyi Kaydet",GREEN); saveList.setOnClickListener(v->{saveListPhones(activeList,editingPhones); selected.clear(); selected.addAll(editingPhones); save(); cloudPushFavLists(); toast("Liste kaydedildi"); favListsScreen();}); top.addView(saveList);
         TextView delList=btn("BU LİSTEYİ KALDIR",RED); delList.setOnClickListener(v->confirmDeleteList(activeList)); top.addView(delList);
         root.addView(top);
 
