@@ -2115,22 +2115,7 @@ void home(){
                         ImageView img=new ImageView(this); img.setScaleType(ImageView.ScaleType.CENTER_CROP);
                         android.graphics.drawable.GradientDrawable imgBg=new android.graphics.drawable.GradientDrawable();
                         imgBg.setColor(0xFF1E2533); imgBg.setCornerRadius(dp(4)); img.setBackground(imgBg);
-                        String thumbUri=photos.get(pi);
-                        boolean thumbIsPdf=thumbUri.toLowerCase().contains(".pdf");
-                        if(!thumbIsPdf){
-                            try{
-                                String mt=getContentResolver().getType(Uri.parse(thumbUri));
-                                thumbIsPdf=(mt!=null && mt.equals("application/pdf"));
-                            }catch(Throwable ignored){}
-                        }
-                        if(thumbIsPdf){
-                            imgBg.setColor(0xFFDC2626);
-                            img.setScaleType(ImageView.ScaleType.CENTER);
-                            img.setImageResource(android.R.drawable.ic_menu_save);
-                            img.setColorFilter(Color.WHITE);
-                        } else {
-                            try{ img.setImageURI(Uri.parse(thumbUri)); }catch(Throwable ignored){}
-                        }
+                        try{ img.setImageURI(Uri.parse(photos.get(pi))); }catch(Throwable ignored){}
                         cell.addView(img,new android.widget.FrameLayout.LayoutParams(-1,-1));
                         android.view.View ov=new android.view.View(this);
                         android.graphics.drawable.GradientDrawable ovBg=new android.graphics.drawable.GradientDrawable(
@@ -2367,19 +2352,13 @@ void home(){
 
     void cell(GridLayout grid,String uri){
         LinearLayout cell=new LinearLayout(this); cell.setOrientation(LinearLayout.VERTICAL); cell.setPadding(dp(7),dp(7),dp(7),dp(7)); cell.setBackground(bg(CARD2,16));
-        ImageView img=new ImageView(this); img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        boolean cellIsPdf=uri.toLowerCase().contains(".pdf");
-        if(!cellIsPdf){ try{ String mt=getContentResolver().getType(Uri.parse(uri)); cellIsPdf=(mt!=null && mt.equals("application/pdf")); }catch(Throwable ignored){} }
-        if(cellIsPdf){
-            img.setBackgroundColor(0xFFDC2626); img.setScaleType(ImageView.ScaleType.CENTER);
-            img.setImageResource(android.R.drawable.ic_menu_save); img.setColorFilter(Color.WHITE);
-        } else { try{img.setImageURI(Uri.parse(uri));}catch(Exception e){} }
+        ImageView img=new ImageView(this); img.setScaleType(ImageView.ScaleType.CENTER_CROP); try{img.setImageURI(Uri.parse(uri));}catch(Exception e){}
         cell.addView(img,new LinearLayout.LayoutParams(-1,dp(150)));
         TextView rem=t("Kaldır",13,true,RED); rem.setGravity(Gravity.CENTER); rem.setOnClickListener(v->{media.remove(uri);save();mediaScreen();}); cell.addView(rem);
         GridLayout.LayoutParams gp=new GridLayout.LayoutParams(); gp.width=(getResources().getDisplayMetrics().widthPixels-dp(44))/2; gp.setMargins(dp(4),dp(4),dp(4),dp(4)); grid.addView(cell,gp);
     }
     void galleryPicker(){ perms(false); Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("image/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Galeriden coklu gorsel sec"),REQ_MEDIA); }
-    void galleryPickerForAlbum(){ perms(false); Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("*/*"); i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"image/*","application/pdf"}); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Album "+(pickingAlbumIdx+1)+" icin gorsel/PDF sec"),REQ_ALBUM_BASE+pickingAlbumIdx); }
+    void galleryPickerForAlbum(){ perms(false); Intent i=new Intent(Intent.ACTION_GET_CONTENT); i.setType("image/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(i,"Album "+(pickingAlbumIdx+1)+" icin gorsel sec"),REQ_ALBUM_BASE+pickingAlbumIdx); }
     void filePicker(){ Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT); i.setType("*/*"); i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true); i.addCategory(Intent.CATEGORY_OPENABLE); i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"image/*","video/*","application/pdf"}); startActivityForResult(Intent.createChooser(i,"PDF / Dosya seç"),REQ_MEDIA); }
     @Override protected void onActivityResult(int req,int res,Intent data){
         super.onActivityResult(req,res,data);
