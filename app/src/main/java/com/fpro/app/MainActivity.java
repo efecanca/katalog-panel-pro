@@ -55,6 +55,7 @@ public class MainActivity extends Activity {
     LinkedHashSet<String> selectedFavLists=new LinkedHashSet<>();
     HashMap<String,String> favStatusCache=new HashMap<>();
     TextView connectionText, countText, sendButton, statusText, queueText, sentText, progressText, currentPersonText, etaText;
+    volatile long waConnectedAt=0;
 
     int[] sendRingProg=null;
     android.view.View sendRingView=null;
@@ -800,6 +801,30 @@ void loginScreen(){
         }).start();
     }
 
+    String formatUptime(long connectedAtMs){
+        if(connectedAtMs<=0) return "aktif";
+        long sec=(System.currentTimeMillis()-connectedAtMs)/1000;
+        if(sec<0) sec=0;
+        long h=sec/3600, m=(sec%3600)/60;
+        return h>0 ? (h+"sa "+m+"dk") : (m+"dk");
+    }
+
+    boolean uptimeTickerRunning=false;
+    void startUptimeTicker(){
+        if(uptimeTickerRunning) return;
+        uptimeTickerRunning=true;
+        Handler h=new Handler(Looper.getMainLooper());
+        Runnable[] tick=new Runnable[1];
+        tick[0]=()->{
+            if(waConnected && waConnectedAt>0){
+                waStatus="Oturum süresi: "+formatUptime(waConnectedAt);
+                if(connectionText!=null) connectionText.setText(waStatus);
+            }
+            h.postDelayed(tick[0],30000);
+        };
+        h.postDelayed(tick[0],30000);
+    }
+
     void cloudReconnect(){
         if(apiBase==null || apiToken==null) return;
         new Thread(()->{
@@ -1511,12 +1536,14 @@ void home(){
             try{
                 JSONObject j=new JSONObject(httpGet(apiBase+"/mobile/status?token="+apiToken));
                 boolean ok=j.optBoolean("connected",false);
-                        waStatus = ok ? ("Oturum süresi: "+j.optString("uptimeText","aktif")) : "WhatsApp bağlantısı yok";
+                waConnectedAt = ok ? j.optLong("connectedAt",0) : 0;
+                waStatus = ok ? ("Oturum süresi: "+formatUptime(waConnectedAt)) : "WhatsApp bağlantısı yok";
                 runOnUiThread(()->{
                     waConnected=ok;
                     if(!ok) waStatus="● WhatsApp bağlantısı yok";
                     if(connectionText!=null) connectionText.setText(waStatus);
                     invalidateDashboard();
+                    startUptimeTicker();
                 });
             }catch(Exception e){
                 runOnUiThread(()->{
