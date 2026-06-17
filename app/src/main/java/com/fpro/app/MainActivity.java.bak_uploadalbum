@@ -3595,10 +3595,7 @@ void sendScreen(){
             android.content.ContentResolver cr=getContentResolver();
             String mime=cr.getType(uri);
             if(mime==null) mime="image/jpeg";
-            String ext;
-            if(mime.contains("pdf")) ext="pdf";
-            else if(mime.contains("video")) ext="mp4";
-            else ext="jpg";
+            String ext=mime.contains("video")?"mp4":"jpg";
 
             ps.print("--"+boundary+"\r\n");
             ps.print("Content-Disposition: form-data; name=\"files\"; filename=\"media"+i+"."+ext+"\"\r\n");
