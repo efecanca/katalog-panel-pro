@@ -267,13 +267,7 @@
                         android:maxLines="1"
                         android:ellipsize="end" />
 
-                    <TextView
-                        android:id="@+id/tvSessionInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Oturum süresi: 2sa 14dk"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+
                 </LinearLayout>
 
                 <!-- QR Kartı -->
