@@ -1526,13 +1526,7 @@ void home(){
                 });
             }
         }).start();
-
-// Oturum süresini 30 saniyede bir yenile
-new Handler(Looper.getMainLooper()).postDelayed(() -> {
-    try { checkStatus(); } catch(Exception ignored) {}
-}, 30000);
-
-    }
+}
 
     void contactsScreen(){
         baseFixed("Rehber");
