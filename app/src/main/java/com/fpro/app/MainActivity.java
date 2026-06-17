@@ -3156,10 +3156,7 @@ void sendScreen(){
             riBg.setColor(0xFF0D0E11); ringLbl.setGravity(android.view.Gravity.CENTER); ringLbl.setText((sendProgress!=null && sendProgress.getProgress()>=100)?"TAMAMLANDI":(sending?"İLERLİYOR":"GÖNDER"));
             new android.os.Handler().postDelayed(()->startSend(),1500);
         }
-        // Gönderim bittiyse de ring'i düzelt
-        if(!sending && sendProgress!=null && sendProgress.getProgress()>=100){
-            onSendComplete();
-        }
+        // Gönderim bittiyse de ring'i düzelt (onSendComplete artık sendFinishedUI ile yapılıyor)
     }
 
 
