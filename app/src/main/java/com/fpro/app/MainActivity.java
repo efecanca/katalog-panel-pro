@@ -692,7 +692,8 @@ void loginScreen(){
             try{
                 JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
                 int latestCode=r.optInt("versionCode",0);
-                int currentCode=com.fpro.app.BuildConfig.VERSION_CODE;
+                int currentCode=0;
+                try{ currentCode=getPackageManager().getPackageInfo(getPackageName(),0).versionCode; }catch(Exception ignored){}
                 boolean force=r.optBoolean("forceUpdate",false);
                 String latestName=r.optString("versionName","");
                 String changelog=r.optString("changelog","");
