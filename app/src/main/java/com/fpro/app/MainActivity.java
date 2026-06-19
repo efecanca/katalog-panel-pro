@@ -668,7 +668,7 @@ void loginScreen(){
     void checkUpdate(){
         // Her acilista kontrol et (1 saatte bir)
         long lastCheck=appPrefs().getLong("lastUpdateCheck",0);
-        if(System.currentTimeMillis()-lastCheck < 3600000) return;
+        if(System.currentTimeMillis()-lastCheck < 60000) return;
         appPrefs().edit().putLong("lastUpdateCheck",System.currentTimeMillis()).apply();
         // Bilinmeyen kaynak izni kontrol et
         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
