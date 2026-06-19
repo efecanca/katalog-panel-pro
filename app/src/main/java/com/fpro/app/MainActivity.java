@@ -666,9 +666,9 @@ void loginScreen(){
     }
 
     void checkUpdate(){
-        // Gunde bir kez kontrol et
+        // Her acilista kontrol et (1 saatte bir)
         long lastCheck=appPrefs().getLong("lastUpdateCheck",0);
-        if(System.currentTimeMillis()-lastCheck < 86400000) return;
+        if(System.currentTimeMillis()-lastCheck < 3600000) return;
         appPrefs().edit().putLong("lastUpdateCheck",System.currentTimeMillis()).apply();
         // Bilinmeyen kaynak izni kontrol et
         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
@@ -692,7 +692,7 @@ void loginScreen(){
             try{
                 JSONObject r=new JSONObject(httpGet(apiBase+"/version.json"));
                 int latestCode=r.optInt("versionCode",0);
-                int currentCode=98;
+                int currentCode=BuildConfig.VERSION_CODE;
                 boolean force=r.optBoolean("forceUpdate",false);
                 String latestName=r.optString("versionName","");
                 String changelog=r.optString("changelog","");
