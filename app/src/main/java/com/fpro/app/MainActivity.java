@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
     // Albüm sistemi: her albüm = {photos: [], caption: ""}
     ArrayList<ArrayList<String>> albums=new ArrayList<>(); // foto listeleri
     ArrayList<String> albumCaptions=new ArrayList<>(); // her albümün mesajı
+    HashSet<Integer> collapsedAlbums=new HashSet<>(); // kapatilmis albumler
     ArrayList<String> albumNames=new ArrayList<>(); // her albümün adı
     boolean albumSendMode=true; // true=albüm modu, false=tek medya modu
     int pickingAlbumIdx=-1; // hangi albüm için galeri açıldı
@@ -2099,13 +2100,16 @@ void home(){
             // ── BODY (collapse) — ilk albüm açık, diğerleri kapalı ──
             final LinearLayout aBody=new LinearLayout(this);
             aBody.setOrientation(LinearLayout.VERTICAL);
-            aBody.setVisibility(idx==0?android.view.View.VISIBLE:android.view.View.GONE);
+            aBody.setVisibility(collapsedAlbums.contains(idx)?android.view.View.GONE:android.view.View.VISIBLE);
 
             // Başlığa tıklayınca aç/kapat
+            final int albumIdx=idx;
             aHead.setOnClickListener(v->{
                 boolean nowVisible=aBody.getVisibility()==android.view.View.VISIBLE;
                 aBody.setVisibility(nowVisible?android.view.View.GONE:android.view.View.VISIBLE);
                 chevron.setText(nowVisible?"⌄":"⌃");
+                if(nowVisible) collapsedAlbums.add(albumIdx);
+                else collapsedAlbums.remove(albumIdx);
             });
             aCard.addView(aHead);
 
