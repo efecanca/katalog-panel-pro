@@ -2906,26 +2906,31 @@ void sendScreen(){
         // Ring tıklama → startSend()
         ringFrame.setOnClickListener(v->{ if(!sending) startSend(); });
 
-        // ── DURDUR butonu (kırmızı küçük yuvarlak) ──────────────────────────
+        // ── DURDUR butonu (büyük, belirgin) ──────────────────────────
         sendStopFrame=new android.widget.FrameLayout(this);
         final android.widget.FrameLayout stopFrame=sendStopFrame;
-        stopFrame.setLayoutParams(new LinearLayout.LayoutParams(dp(52),dp(52)));
         stopFrame.setVisibility(sending?android.view.View.VISIBLE:android.view.View.GONE);
-        android.view.View stopBgV=new android.view.View(this);
         android.graphics.drawable.GradientDrawable stopD=new android.graphics.drawable.GradientDrawable();
-        stopD.setColor(0xFF1A0E0E); stopD.setCornerRadius(dp(26)); stopD.setStroke(dp(2),0x66EF4444);
-        stopBgV.setBackground(stopD);
-        stopFrame.addView(stopBgV,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        stopD.setColor(0xFFDC2626); stopD.setCornerRadius(dp(16));
+        stopFrame.setBackground(stopD);
+        LinearLayout stopInner=new LinearLayout(this);
+        stopInner.setOrientation(LinearLayout.HORIZONTAL);
+        stopInner.setGravity(android.view.Gravity.CENTER);
+        stopInner.setLayoutParams(new android.widget.FrameLayout.LayoutParams(-1,-1));
         android.view.View stopSq=new android.view.View(this);
         android.graphics.drawable.GradientDrawable sqD=new android.graphics.drawable.GradientDrawable();
-        sqD.setColor(0xFFEF4444); sqD.setCornerRadius(dp(3)); stopSq.setBackground(sqD);
-        android.widget.FrameLayout.LayoutParams sqLp=new android.widget.FrameLayout.LayoutParams(dp(18),dp(18),android.view.Gravity.CENTER);
-        sqLp.setMargins(0,dp(2),0,0); stopSq.setLayoutParams(sqLp);
-        stopFrame.addView(stopSq);
-        TextView durLbl=t("DUR",7,true,0xFFEF4444); durLbl.setLetterSpacing(0.04f);
-        android.widget.FrameLayout.LayoutParams durLp=new android.widget.FrameLayout.LayoutParams(-2,-2,android.view.Gravity.BOTTOM|android.view.Gravity.CENTER_HORIZONTAL);
-        durLp.setMargins(0,0,0,dp(7)); durLbl.setLayoutParams(durLp);
-        stopFrame.addView(durLbl);
+        sqD.setColor(0xFFFFFFFF); sqD.setCornerRadius(dp(3)); stopSq.setBackground(sqD);
+        LinearLayout.LayoutParams sqLp=new LinearLayout.LayoutParams(dp(14),dp(14));
+        sqLp.setMargins(0,0,dp(8),0); stopSq.setLayoutParams(sqLp);
+        stopInner.addView(stopSq);
+        TextView durLbl=t("Durdur",15,true,0xFFFFFFFF);
+        durLbl.setLetterSpacing(0.01f);
+        stopInner.addView(durLbl);
+        stopFrame.addView(stopInner);
+        LinearLayout.LayoutParams sfLp=new LinearLayout.LayoutParams(dp(180),dp(52));
+        sfLp.setMargins(0,dp(18),0,0);
+        sfLp.gravity=android.view.Gravity.CENTER_HORIZONTAL;
+        stopFrame.setLayoutParams(sfLp);
         stopFrame.setOnClickListener(v->stopSend());
 
         // Glow efekti — ring etrafına yeşil parlama
