@@ -2958,10 +2958,6 @@ void sendScreen(){
         bWrap.addView(ringFrame);
 
         // Durdur — ring altında ortalı (sadece gönderim sırasında)
-        LinearLayout.LayoutParams sfLp=new LinearLayout.LayoutParams(-2,-2);
-        sfLp.setMargins(0,dp(14),0,0);
-        sfLp.gravity=android.view.Gravity.CENTER_HORIZONTAL;
-        stopFrame.setLayoutParams(sfLp);
         bWrap.addView(stopFrame);
 
         // Bilgi satırı: "{kişi} kişi • {albüm} albüm • {foto} foto"
