@@ -35,8 +35,8 @@ public class MainActivity extends Activity {
     final int GREEN=Color.rgb(48,207,64), BLUE=Color.rgb(31,132,255), PURPLE=Color.rgb(142,86,255);
     final int RED=Color.rgb(239,68,68), YELLOW=Color.rgb(255,210,45), MUTED=Color.rgb(155,165,170);
     final int BORDER=Color.rgb(45,55,58);
-    final String API="http://178.105.143.110:3001";
-    String apiBase="http://178.105.143.110:3001";
+    final String API="https://fpro.com.tr";
+    String apiBase="https://fpro.com.tr";
     String loginUser="", apiToken="";
     static final int REQ_MEDIA=501;
     static final int REQ_ALBUM_BASE=600; // 600,601,602... her albüm için
