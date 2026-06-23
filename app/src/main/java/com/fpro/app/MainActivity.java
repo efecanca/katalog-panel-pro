@@ -3366,10 +3366,7 @@ void sendScreen(){
 
         String msg=msgBox.getText().toString().trim();
 
-        final android.os.PowerManager pm2=(android.os.PowerManager)getSystemService(POWER_SERVICE);
-        final android.os.PowerManager.WakeLock wl2=pm2.newWakeLock(
-            android.os.PowerManager.PARTIAL_WAKE_LOCK,"KatalogPanel:Send");
-        wl2.acquire(4*60*60*1000L);
+        // WakeLock kaldirildi — V2 mimarisinde gonderim sunucudan yapiliyor, telefon uyanik kalmak zorunda degil
 
         new Thread(()->{
             final int total=targets.size();
@@ -3408,7 +3405,7 @@ void sendScreen(){
 
                 if(allFileUris.isEmpty()){
                     runOnUiThread(()->toast("Gönderilecek dosya bulunamadı"));
-                    sendFinishedUI(wl2);
+                    sendFinishedUI();
                     return;
                 }
 
@@ -3482,14 +3479,14 @@ void sendScreen(){
                 runOnUiThread(()->toast("Hata: "+errMsg));
             }
 
-            sendFinishedUI(wl2);
+            sendFinishedUI();
         }).start();
     }
 
-    void sendFinishedUI(android.os.PowerManager.WakeLock wl2){
+    void sendFinishedUI(){
         sending=false;
         currentJobId="";
-        try{ if(wl2.isHeld()) wl2.release(); }catch(Exception ignored){}
+        // wl2 kaldirildi
         runOnUiThread(()->{
             refreshQueue();
         });
