@@ -264,7 +264,7 @@ String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşö
     appPrefs().edit().putString(listKey(name),join(phones,",")).commit();
     try{
         if(apiToken!=null && apiToken.length()>=5){
-            favChangedSync();
+            cloudPushFavLists();
         }
     }catch(Exception ignored){}
 }
@@ -1687,7 +1687,7 @@ void home(){
 
             TextView del=smallBtn("SİL",RED);
             del.setTextSize(9);
-            del.setOnClickListener(v->{ favLists.remove(l); appPrefs().edit().remove("list_"+l).apply(); save(); favChangedSync(); favListsScreen(); });
+            del.setOnClickListener(v->{ favLists.remove(l); appPrefs().edit().remove("list_"+l).apply(); save(); cloudPushFavLists(); favListsScreen(); });
             actions.addView(del,new LinearLayout.LayoutParams(dp(44),dp(36)));
 
             row.addView(actions,new LinearLayout.LayoutParams(-2,-2));
@@ -1768,7 +1768,7 @@ void home(){
         TextView ist=smallBtn("İSTATİSTİK",PURPLE); ist.setOnClickListener(v->statsScreen()); tabs.addView(ist,new LinearLayout.LayoutParams(0,-2,1));
         top.addView(tabs);
         TextView addContact=btn("+ YENİ KİŞİ EKLE",BLUE); addContact.setOnClickListener(v->manualAddContactDialog()); top.addView(addContact);
-        TextView saveList=btn("Listeyi Kaydet",GREEN); saveList.setOnClickListener(v->{saveListPhones(activeList,editingPhones); selected.clear(); selected.addAll(editingPhones); save(); favChangedSync(); toast("Liste kaydedildi"); favListsScreen();}); top.addView(saveList);
+        TextView saveList=btn("Listeyi Kaydet",GREEN); saveList.setOnClickListener(v->{saveListPhones(activeList,editingPhones); selected.clear(); selected.addAll(editingPhones); save(); cloudPushFavLists(); toast("Liste kaydedildi"); favListsScreen();}); top.addView(saveList);
         TextView delList=btn("BU LİSTEYİ KALDIR",RED); delList.setOnClickListener(v->confirmDeleteList(activeList)); top.addView(delList);
         root.addView(top);
 
@@ -1962,7 +1962,7 @@ void home(){
         final EditText e=input("","Liste adı");
         new AlertDialog.Builder(this).setTitle("Yeni Liste").setView(e).setPositiveButton("Oluştur",(d,w)->{
             String n=e.getText().toString().trim(); if(n.length()==0)n="Yeni Liste";
-            if(!favLists.contains(n)) favLists.add(n); activeList=n; save(); favChangedSync(); listEditScreen();
+            if(!favLists.contains(n)) favLists.add(n); activeList=n; save(); cloudPushFavLists(); listEditScreen();
         }).setNegativeButton("İptal",null).show();
     }
 
@@ -4541,7 +4541,7 @@ void settingsScreen(){
             save();
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
-            try{ favChangedSync(); }catch(Exception ignored){}
+            try{ cloudPushFavLists(); }catch(Exception ignored){}
             return;
         }
 
