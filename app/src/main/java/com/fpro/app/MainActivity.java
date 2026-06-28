@@ -783,6 +783,7 @@ void loginScreen(){
 
     void cloudPushFavContacts(){
         if(apiToken==null || apiToken.length()<5) return;
+        if(favLists==null || favLists.size()==0) return;
         try{
             JSONObject fbody=new JSONObject();
             fbody.put("favLists",favListsToJson());
@@ -793,6 +794,7 @@ void loginScreen(){
 
     void cloudPushFavLists(){
         if(apiToken==null || apiToken.length()<5) return;
+        if(favLists==null || favLists.size()==0) return;
         new Thread(()->{
             try{
                 org.json.JSONObject fbody=new org.json.JSONObject();
