@@ -264,7 +264,7 @@ String listKey(String name){ return "list_"+name.replaceAll("[^A-Za-z0-9ğüşö
     appPrefs().edit().putString(listKey(name),join(phones,",")).commit();
     try{
         if(apiToken!=null && apiToken.length()>=5){
-            new Thread(()->cloudPushFavContacts()).start();
+            favChangedSync();
         }
     }catch(Exception ignored){}
 }
@@ -779,6 +779,18 @@ void loginScreen(){
             }
             save();
         }catch(Exception ignored){}
+    }
+
+
+    void favChangedSync(){
+        if(apiToken==null || apiToken.length()<5) return;
+        if(favLists==null || favLists.size()==0) return;
+        new Thread(() -> {
+            try{
+                cloudPushFavContacts();
+                cloudPullFavLists();
+            }catch(Exception ignored){}
+        }).start();
     }
 
     void cloudPushFavContacts(){
@@ -1675,7 +1687,7 @@ void home(){
 
             TextView del=smallBtn("SİL",RED);
             del.setTextSize(9);
-            del.setOnClickListener(v->{ favLists.remove(l); appPrefs().edit().remove("list_"+l).apply(); save(); cloudPushFavLists(); favListsScreen(); });
+            del.setOnClickListener(v->{ favLists.remove(l); appPrefs().edit().remove("list_"+l).apply(); save(); favChangedSync(); favListsScreen(); });
             actions.addView(del,new LinearLayout.LayoutParams(dp(44),dp(36)));
 
             row.addView(actions,new LinearLayout.LayoutParams(-2,-2));
@@ -1756,7 +1768,7 @@ void home(){
         TextView ist=smallBtn("İSTATİSTİK",PURPLE); ist.setOnClickListener(v->statsScreen()); tabs.addView(ist,new LinearLayout.LayoutParams(0,-2,1));
         top.addView(tabs);
         TextView addContact=btn("+ YENİ KİŞİ EKLE",BLUE); addContact.setOnClickListener(v->manualAddContactDialog()); top.addView(addContact);
-        TextView saveList=btn("Listeyi Kaydet",GREEN); saveList.setOnClickListener(v->{saveListPhones(activeList,editingPhones); selected.clear(); selected.addAll(editingPhones); save(); cloudPushFavLists(); toast("Liste kaydedildi"); favListsScreen();}); top.addView(saveList);
+        TextView saveList=btn("Listeyi Kaydet",GREEN); saveList.setOnClickListener(v->{saveListPhones(activeList,editingPhones); selected.clear(); selected.addAll(editingPhones); save(); favChangedSync(); toast("Liste kaydedildi"); favListsScreen();}); top.addView(saveList);
         TextView delList=btn("BU LİSTEYİ KALDIR",RED); delList.setOnClickListener(v->confirmDeleteList(activeList)); top.addView(delList);
         root.addView(top);
 
@@ -1950,7 +1962,7 @@ void home(){
         final EditText e=input("","Liste adı");
         new AlertDialog.Builder(this).setTitle("Yeni Liste").setView(e).setPositiveButton("Oluştur",(d,w)->{
             String n=e.getText().toString().trim(); if(n.length()==0)n="Yeni Liste";
-            if(!favLists.contains(n)) favLists.add(n); activeList=n; save(); cloudPushFavLists(); listEditScreen();
+            if(!favLists.contains(n)) favLists.add(n); activeList=n; save(); favChangedSync(); listEditScreen();
         }).setNegativeButton("İptal",null).show();
     }
 
@@ -4529,7 +4541,7 @@ void settingsScreen(){
             save();
             if(adapter!=null) adapter.notifyDataSetChanged();
             updateCount();
-            try{ new Thread(()->cloudPushFavContacts()).start(); }catch(Exception ignored){}
+            try{ favChangedSync(); }catch(Exception ignored){}
             return;
         }
 
