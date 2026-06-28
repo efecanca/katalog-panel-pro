@@ -890,6 +890,9 @@ void syncFromServerSilent(){
             JSONObject data=r.optJSONObject("data");
             if(data==null) return;
 
+            // Fav listeleri de sessizce sunucudan çek
+            cloudPullFavLists();
+
             // Şimdilik güvenli temel sync: media/reports/settings alanları sunucuda tutulabilir.
             // Android local format çok değişken olduğu için fav listeler mevcut yapıyı bozmadan korunur.
             if(data.has("reports")){
